@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const env = require('dotenv');
 const mongoose = require('mongoose');
+const MovieRoutes = require('./routes/movie.routes');
 
 env.config();
 const app = express();
@@ -9,6 +10,8 @@ const port = process.env.PORT || 3000;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+MovieRoutes(app); //Invoking movie routes
 
 app.get('/', (req, res) => {
   return res.json({
