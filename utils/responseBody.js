@@ -2,7 +2,7 @@
 const errorResponseBody = {
     err: {},
     data: {},
-    message: "Something wen wrong, Can not process the request",
+    message: "Something went wrong, Can not process the request",
     success: false
 }
 

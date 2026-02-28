@@ -79,8 +79,30 @@ const getMovie = async (req, res) => {
     }
 };
 
+const updateMovie = async (req, res) => {
+    try{
+        const id = req.params.movieId;
+        const updateData = req.body;
+        const response = await MovieService.updateMovie(id, updateData);
+        if(response.err){
+            errorResponseBody.err = response.err;
+            errorResponseBody.message = response.message;
+            return res.status(response.code).json(errorResponseBody);
+        }
+        successResponseBody.data = response;
+        successResponseBody.message = "Movie updated successfully";
+        res.status(200).json(successResponseBody);
+    }
+    catch(error){
+        errorResponseBody.err = error.message;
+        errorResponseBody.message = "Failed to update movie";
+        res.status(500).json(errorResponseBody);
+    }
+}
+
 module.exports = {
     createMovie,
     deleteMovie,
-    getMovie
+    getMovie,
+    updateMovie
 };
