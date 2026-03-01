@@ -76,9 +76,35 @@ const updateMovie = async (id,updateData) => {
     }
 };
 
+const fetchMovies = async (filter) => {
+    try{
+        let query = {};
+        if(filter.name){
+           query.name = { $regex: filter.name, $options: 'i' }; // Case-insensitive search 
+        }
+        const movies = await Movie.find(query);
+        if(movies.length === 0) {
+            return {
+                err: 'No movies found',
+                code: 404,
+                message: `No movies found matching the criteria` 
+            }
+        }
+        return movies;
+    }
+    catch(error){
+        return {
+            err: error.message,
+            code: 500,
+            message: `Error fetching movies` 
+        }
+    }
+};
+
 module.exports = {
     createMovie,
     deleteMovie,
     getMovieById,
-    updateMovie
+    updateMovie,
+    fetchMovies
 }
