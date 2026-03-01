@@ -26,6 +26,50 @@ const createTheatre = async (data) => {
     }
 };
 
+const deleteTheatre = async(id) => {
+    try{
+        const theatre = await Theatre.findByIdAndDelete(id);
+        if(!theatre){
+            return {
+                err: 'Theatre not found',
+                code: 404,
+                message: `No theatre found with id ${id}` 
+            }
+        }
+        return theatre;
+    }
+    catch(error){
+        return {
+            err: error.message,
+            code: 500,
+            message: "Error deleting Theatre"
+        }
+    }
+}
+
+const getTheatreById = async (id) => {
+    try{
+        const theatre = await Theatre.findById(id);
+        if(!theatre){
+            return {
+                err: 'Movie not found',
+                code: 404,
+                message: `No movie found with id ${id}` 
+            }
+        }
+        return theatre;
+    }
+    catch(error){
+        return {
+            err: error.message,
+            code: 500,
+            message: "Error getting theatre"
+        }
+    }
+};
+
 module.exports = {
-    createTheatre
+    createTheatre,
+    deleteTheatre,
+    getTheatreById
 }

@@ -1,4 +1,5 @@
-const theatreService = require('../service/theatre.service');
+const Theatre = require('../models/theatre.model');
+const TheatreService = require('../service/theatre.service');
 const {successResponseBody, errorResponseBody} = require('../utils/responseBody');
 /*
     Controller for theatre resource, it receives the request and sends response to the client.
@@ -15,7 +16,7 @@ const {successResponseBody, errorResponseBody} = require('../utils/responseBody'
 
 const createTheatre = async (req, res) => {
     try{
-        const response = await theatreService.createTheatre(req.body);
+        const response = await TheatreService.createTheatre(req.body);
         if(response.err){
             errorResponseBody.err = response.err;
             errorResponseBody.message = response.message;
@@ -32,6 +33,47 @@ const createTheatre = async (req, res) => {
     }
 };
 
+const deleteTheatre = async (req,res) => {
+    try{
+        const id = req.params.theatreId;
+        const response = await TheatreService.deleteTheatre(id);
+        if(response.err){
+            errorResponseBody.err = response.err;
+            errorResponseBody.message = response.message;
+            return res.status(response.code).json(errorResponseBody);
+        }
+        successResponseBody.data = response;
+        successResponseBody.message = 'Theatre deleted successfully';
+        return res.status(200).json(successResponseBody);
+    }
+    catch(error){
+        errorResponseBody.err = error.message;
+        errorResponseBody.message = "Failed to delete theatre";
+        res.status(500).json(errorResponseBody);     }
+}
+
+const getTheatre = async (req,res) => {
+    try{
+        const id = req.params.theatreId;
+        const response = await TheatreService.getTheatreById(id);
+        if(response.err){
+            errorResponseBody.err = response.err;
+            errorResponseBody.message = response.message;
+            return res.status(response.code).json(errorResponseBody);
+        }
+        successResponseBody.data = response;
+        successResponseBody.message = "Theatre retrieved successfully";
+        return res.status(200).json(successResponseBody);
+    }
+    catch(error){
+        errorResponseBody.err = error.message;
+        errorResponseBody.message = "Failed to get theatre";
+        res.status(500).json(errorResponseBody);
+    }
+}
+
 module.exports = {
-    createTheatre
+    createTheatre,
+    deleteTheatre,
+    getTheatre
 }
