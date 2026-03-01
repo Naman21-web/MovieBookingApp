@@ -52,9 +52,9 @@ const getTheatreById = async (id) => {
         const theatre = await Theatre.findById(id);
         if(!theatre){
             return {
-                err: 'Movie not found',
+                err: 'Theatre not found',
                 code: 404,
-                message: `No movie found with id ${id}` 
+                message: `No theatre found with id ${id}` 
             }
         }
         return theatre;
@@ -68,8 +68,58 @@ const getTheatreById = async (id) => {
     }
 };
 
+const updateTheatre = async (id,updateData) => {
+    try{
+        const theatre = await Theatre.findByIdAndUpdate(id, updateData, {returnDocument: 'after'});
+        //New: true option returns the updated document instead of the original document
+        if(!theatre) {
+            return {
+                err: 'Theatre not found',
+                code: 404,
+                message: `No theatre found with id ${id}` 
+            }
+        }
+        return theatre;
+    }
+    catch(error){
+        return {
+            err: error.message,
+            code: 500,
+            message: `Error updating theatre with id ${id}` 
+        }
+    }
+};
+
+const fetchTheatres = async (filter) => {
+    try{
+        let query = {};
+        if(filter.name){
+           query.name = { $regex: filter.name, $options: 'i' }; // Case-insensitive search 
+        }
+        const theatres = await Theatre.find(query);
+        if(theatres.length === 0) {
+            return {
+                err: 'No theatres found',
+                code: 404,
+                message: `No theatres found matching the criteria` 
+            }
+        }
+        return theatres;
+    }
+    catch(error){
+        return {
+            err: error.message,
+            code: 500,
+            message: `Error fetching theatres` 
+        }
+    }
+};
+
+
 module.exports = {
     createTheatre,
     deleteTheatre,
-    getTheatreById
+    getTheatreById,
+    updateTheatre,
+    fetchTheatres
 }

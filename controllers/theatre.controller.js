@@ -72,8 +72,50 @@ const getTheatre = async (req,res) => {
     }
 }
 
+const updateTheatre = async (req, res) => {
+    try{
+        const id = req.params.theatreId;
+        const updateData = req.body;
+        const response = await TheatreService.updateTheatre(id, updateData);
+        if(response.err){
+            errorResponseBody.err = response.err;
+            errorResponseBody.message = response.message;
+            return res.status(response.code).json(errorResponseBody);
+        }
+        successResponseBody.data = response;
+        successResponseBody.message = "Theatre updated successfully";
+        res.status(200).json(successResponseBody);
+    }
+    catch(error){
+        errorResponseBody.err = error.message;
+        errorResponseBody.message = "Failed to update theatre";
+        res.status(500).json(errorResponseBody);
+    }
+}
+
+const getTheatres = async (req,res) => {
+    try{
+        const response = await TheatreService.fetchTheatres(req.query);
+        if(response.err){
+            errorResponseBody.err = response.err;
+            errorResponseBody.message = response.message;
+            return res.status(response.code).json(errorResponseBody);
+        }
+        successResponseBody.data = response;
+        successResponseBody.message = "Theatres retrieved successfully";
+        res.status(200).json(successResponseBody);
+    }
+    catch(error){
+        errorResponseBody.err = error.message;
+        errorResponseBody.message = "Failed to retrieve theatres";
+        res.status(500).json(errorResponseBody);
+    }
+}
+
 module.exports = {
     createTheatre,
     deleteTheatre,
-    getTheatre
+    getTheatre,
+    updateTheatre,
+    getTheatres
 }
