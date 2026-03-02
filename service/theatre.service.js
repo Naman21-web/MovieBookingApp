@@ -115,11 +115,44 @@ const fetchTheatres = async (filter) => {
     }
 };
 
+const updateMoviesTheatre = async (theatreId,movieIds,insert) => {
+    try{
+        const theatreExists = await Theatre.findById(theatreId);
+        if (!theatreExists) {
+            return {
+                err: 'No theatres found',
+                code: 404,
+                message: `No theatres found matching the criteria` 
+            }
+        }
+        insert = Boolean(JSON.parse(insert));
+
+        const updateAction = insert
+    ? { $addToSet: { movies: { $each: movieIds } } }
+    : { $pull: { movies: { $in: movieIds } } };
+
+        const theatre = await Theatre.findByIdAndUpdate(
+            theatreId,
+            updateAction,
+            { returnDocument: 'after' , runValidators: true }
+        ).populate('movies');
+        return theatre;
+    }
+    catch(error){
+        return {
+            err: error.message,
+            code: 500,
+            message: `Error updating movies in theatre` 
+        }
+    }
+}
+
 
 module.exports = {
     createTheatre,
     deleteTheatre,
     getTheatreById,
     updateTheatre,
-    fetchTheatres
+    fetchTheatres,
+    updateMoviesTheatre
 }

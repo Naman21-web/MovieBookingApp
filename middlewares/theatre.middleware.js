@@ -33,6 +33,36 @@ const validateTheatreCreateRequest = async (req,res,next) => {
     next();
 }
 
+const validateUpdateMovies = async (req,res,next) => {
+    //validate the insert param
+    if(req.body.insert == undefined){
+        badRequestResponse.err = "The insert params is not present in the request sent";
+        return res.status(400).json(badRequestResponse);
+    }
+
+    //validate the movieIds
+    if(!req.body.movieIds){
+        badRequestResponse.err = "The movieIds is not present in the request sent to update in theatre";
+        return res.status(400).json(badRequestResponse);
+    }
+
+    //Movie Id is not an array
+    if(!Array.isArray(req.body.movieIds)){
+        badRequestResponse.err = "Expected array of movies but found something else in the request sent";
+        return res.status(400).json(badRequestResponse);
+    }
+
+    //No movie in the array
+    if(req.body.movieIds.length==0){
+        badRequestResponse.err = "No movie present in the array of the request sent";
+        return res.status(400).json(badRequestResponse);
+    }
+
+    //If all validations pass, call the next middleware or controller
+    next();
+}
+
 module.exports = {
-    validateTheatreCreateRequest
+    validateTheatreCreateRequest,
+    validateUpdateMovies
 }
