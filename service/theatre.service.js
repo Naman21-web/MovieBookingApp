@@ -1,4 +1,5 @@
 const Theatre = require('../models/theatre.model');
+const Movie = require('../models/movie.model');
 
 const createTheatre = async (data) => {
     try{
@@ -98,14 +99,19 @@ const fetchTheatres = async (data) => {
         //    query.name = { $regex: filter.name, $options: 'i' }; // Case-insensitive search 
         // }
         if(data && data.city){
-            query.city = city;
+            query.city = data.city;
         }
         if(data && data.pincode){
-            query.pincode = city;
+            query.pincode = data.pincode;
         }
         if(data && data.name){
-            query.name = name;
+            query.name = data.name;
         }
+        if(data && data.movieId){
+            let movie = await Movie.findById(data.movieId); 
+            query.movies = {$all: movie};
+        }
+        //Pagination Query
         if(data && data.limit){
             pagination.limit = data.limit;
         }
