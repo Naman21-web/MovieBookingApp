@@ -169,6 +169,20 @@ const updateMoviesTheatre = async (theatreId,movieIds,insert) => {
     }
 }
 
+const getMoviesTheatre = async (theatreId,movieId) => {
+    try{
+        const movies = await Theatre.findById(theatreId,{movies:1,_id:0}).populate("movies");
+        return movies;
+    }
+    catch(error){
+        return {
+            err: error.message,
+            code: 500,
+            message: `Error updating movies in theatre` 
+        }
+    }
+}
+
 
 module.exports = {
     createTheatre,
@@ -176,5 +190,6 @@ module.exports = {
     getTheatreById,
     updateTheatre,
     fetchTheatres,
-    updateMoviesTheatre
+    updateMoviesTheatre,
+    getMoviesTheatre
 }
