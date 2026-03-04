@@ -101,30 +101,29 @@ const updateTheatre = async (id,updateData) => {
     }
 };
 
-const fetchTheatres = async (filter) => {
+const fetchTheatres = async (data) => {
     try{
         let query = {};
-        if(filter.name){
-           query.name = { $regex: filter.name, $options: 'i' }; // Case-insensitive search 
+        let pagination = {};
+
+        // name filter using case-insensitive regex
+        if (data && data.name) {
+            query.name = { $regex: data.name, $options: 'i' };
         }
-<<<<<<< HEAD
-        const theatres = await Theatre.find(query);
-=======
-        if(data && data.pincode){
-            query.pincode = city;
+        if (data && data.city) {
+            query.city = data.city;
         }
-        if(data && data.name){
-            query.name = name;
+        if (data && data.pincode) {
+            query.pincode = data.pincode;
         }
-        if(data && data.limit){
+        if (data && data.limit) {
             pagination.limit = data.limit;
         }
-        if(data && data.skip){
+        if (data && data.skip) {
             let perPage = (data.limit) ? data.limit : 5;
-            pagination.skip = perPage*data.skip;
+            pagination.skip = perPage * data.skip;
         }
-        const theatres = await Theatre.find(query,{},pagination);
->>>>>>> c42555f (Added validation error for updateTheatre)
+        const theatres = await Theatre.find(query, {}, pagination);
         if(theatres.length === 0) {
             return {
                 err: 'No theatres found',
