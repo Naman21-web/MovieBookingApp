@@ -1,4 +1,5 @@
 const Theatre = require('../models/theatre.model');
+const Movie = require('../models/movie.model');
 
 const createTheatre = async (data) => {
     try{
@@ -105,25 +106,27 @@ const fetchTheatres = async (data) => {
     try{
         let query = {};
         let pagination = {};
-
-        // name filter using case-insensitive regex
-        if (data && data.name) {
-            query.name = { $regex: data.name, $options: 'i' };
-        }
-        if (data && data.city) {
+        if(data && data.city){
             query.city = data.city;
         }
-        if (data && data.pincode) {
+        if(data && data.pincode){
             query.pincode = data.pincode;
         }
-        if (data && data.limit) {
+        if(data && data.name){
+            query.name = data.name;
+        }
+        if(data && data.movieId){
+            let movie = await Movie.findById(data.movieId); 
+            query.movies = {$all: movie};
+        }
+        //Pagination Query
+        if(data && data.limit){
             pagination.limit = data.limit;
         }
-        if (data && data.skip) {
-            let perPage = (data.limit) ? data.limit : 5;
-            pagination.skip = perPage * data.skip;
+        if(data && data.skip){
+            pagination.skip = data.skip;
         }
-        const theatres = await Theatre.find(query, {}, pagination);
+        const theatres = await Theatre.find(query,{},pagination);
         if(theatres.length === 0) {
             return {
                 err: 'No theatres found',
@@ -142,11 +145,59 @@ const fetchTheatres = async (data) => {
     }
 };
 
+const updateMoviesTheatre = async (theatreId,movieIds,insert) => {
+    try{
+        const theatreExists = await Theatre.findById(theatreId);
+        if (!theatreExists) {
+            return {
+                err: 'No theatres found',
+                code: 404,
+                message: `No theatres found matching the criteria` 
+            }
+        }
+        insert = Boolean(JSON.parse(insert));
+
+        const updateAction = insert
+    ? { $addToSet: { movies: { $each: movieIds } } }
+    : { $pull: { movies: { $in: movieIds } } };
+
+        const theatre = await Theatre.findByIdAndUpdate(
+            theatreId,
+            updateAction,
+            { returnDocument: 'after' , runValidators: true }
+        ).populate('movies');
+        return theatre;
+    }
+    catch(error){
+        return {
+            err: error.message,
+            code: 500,
+            message: `Error updating movies in theatre` 
+        }
+    }
+}
+
+const getMoviesTheatre = async (theatreId,movieId) => {
+    try{
+        const movies = await Theatre.findById(theatreId,{movies:1,_id:0}).populate("movies");
+        return movies;
+    }
+    catch(error){
+        return {
+            err: error.message,
+            code: 500,
+            message: `Error updating movies in theatre` 
+        }
+    }
+}
+
 
 module.exports = {
     createTheatre,
     deleteTheatre,
     getTheatreById,
     updateTheatre,
-    fetchTheatres
+    fetchTheatres,
+    updateMoviesTheatre,
+    getMoviesTheatre
 }

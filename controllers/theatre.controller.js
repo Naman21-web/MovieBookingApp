@@ -110,6 +110,47 @@ const getTheatres = async (req,res) => {
         errorResponseBody.message = "Failed to retrieve theatres";
         res.status(500).json(errorResponseBody);
     }
+};
+
+const updateMoviesTheatre = async (req,res) => {
+    try{
+        const {movieIds,insert} = req.body;
+        const {theatreId} = req.params;
+        const response = await TheatreService.updateMoviesTheatre(theatreId,movieIds,insert);
+        if(response.err){
+            errorResponseBody.err = response.err;
+            errorResponseBody.message = response.message;
+            return res.status(response.code).json(errorResponseBody);
+        }
+        successResponseBody.data = response;
+        successResponseBody.message = "Movies in Theatre updated successfully";
+        res.status(200).json(successResponseBody);
+    }
+    catch(error){
+      errorResponseBody.err = error.message;
+        errorResponseBody.message = "Failed to retrieve theatres";
+        res.status(500).json(errorResponseBody);  
+    }
+};
+
+const getMoviesTheatre = async (req,res) => {
+    try{
+        const {theatreId} = req.params;
+        const response = await TheatreService.getMoviesTheatre(theatreId);
+        if(response.err){
+            errorResponseBody.err = response.err;
+            errorResponseBody.message = response.message;
+            return res.status(response.code).json(errorResponseBody);
+        }
+        successResponseBody.data = response;
+        successResponseBody.message = "Movies in Theatre fetched successfully";
+        res.status(200).json(successResponseBody);
+    }
+    catch(error){
+      errorResponseBody.err = error.message;
+        errorResponseBody.message = "Failed to retrieve theatres";
+        res.status(500).json(errorResponseBody);  
+    }
 }
 
 module.exports = {
@@ -117,5 +158,7 @@ module.exports = {
     deleteTheatre,
     getTheatre,
     updateTheatre,
-    getTheatres
+    getTheatres,
+    updateMoviesTheatre,
+    getMoviesTheatre
 }
