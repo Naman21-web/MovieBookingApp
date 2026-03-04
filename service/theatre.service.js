@@ -90,13 +90,29 @@ const updateTheatre = async (id,updateData) => {
     }
 };
 
-const fetchTheatres = async (filter) => {
+const fetchTheatres = async (data) => {
     try{
         let query = {};
-        if(filter.name){
-           query.name = { $regex: filter.name, $options: 'i' }; // Case-insensitive search 
+        let pagination = {};
+        // if(filter.name){
+        //    query.name = { $regex: filter.name, $options: 'i' }; // Case-insensitive search 
+        // }
+        if(data && data.city){
+            query.city = city;
         }
-        const theatres = await Theatre.find(query);
+        if(data && data.pincode){
+            query.pincode = city;
+        }
+        if(data && data.name){
+            query.name = name;
+        }
+        if(data && data.limit){
+            pagination.limit = data.limit;
+        }
+        if(data && data.skip){
+            pagination.skip = data.skip;
+        }
+        const theatres = await Theatre.find(query,{},pagination);
         if(theatres.length === 0) {
             return {
                 err: 'No theatres found',
