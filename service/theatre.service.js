@@ -70,7 +70,7 @@ const getTheatreById = async (id) => {
 
 const updateTheatre = async (id,updateData) => {
     try{
-        const theatre = await Theatre.findByIdAndUpdate(id, updateData, {returnDocument: 'after'});
+        const theatre = await Theatre.findByIdAndUpdate(id, updateData, {returnDocument: 'after',runValidators:  true});
         //New: true option returns the updated document instead of the original document
         if(!theatre) {
             return {
@@ -82,6 +82,17 @@ const updateTheatre = async (id,updateData) => {
         return theatre;
     }
     catch(error){
+        if(error.name === 'ValidationError'){
+            let err = {};
+            Object.keys(error.errors).forEach((key) => {
+                err[key] = error.errors[key].message;
+            });
+            return {
+                err: err,
+                code: 422,
+                message: "Validation error while updating theatre"
+            }
+        }
         return {
             err: error.message,
             code: 500,
@@ -90,13 +101,29 @@ const updateTheatre = async (id,updateData) => {
     }
 };
 
-const fetchTheatres = async (filter) => {
+const fetchTheatres = async (data) => {
     try{
         let query = {};
-        if(filter.name){
-           query.name = { $regex: filter.name, $options: 'i' }; // Case-insensitive search 
+        let pagination = {};
+
+        // name filter using case-insensitive regex
+        if (data && data.name) {
+            query.name = { $regex: data.name, $options: 'i' };
         }
-        const theatres = await Theatre.find(query);
+        if (data && data.city) {
+            query.city = data.city;
+        }
+        if (data && data.pincode) {
+            query.pincode = data.pincode;
+        }
+        if (data && data.limit) {
+            pagination.limit = data.limit;
+        }
+        if (data && data.skip) {
+            let perPage = (data.limit) ? data.limit : 5;
+            pagination.skip = perPage * data.skip;
+        }
+        const theatres = await Theatre.find(query, {}, pagination);
         if(theatres.length === 0) {
             return {
                 err: 'No theatres found',
