@@ -180,6 +180,34 @@ const updateMoviesTheatre = async (theatreId,movieIds,insert) => {
 const getMoviesTheatre = async (theatreId,movieId) => {
     try{
         const movies = await Theatre.findById(theatreId,{movies:1,_id:0}).populate("movies");
+        if (!movies) {
+            return {
+                err: 'No Movies found',
+                code: 404,
+                message: `No movies found matching the theatre` 
+            }
+        }
+        return movies;
+    }
+    catch(error){
+        return {
+            err: error.message,
+            code: 500,
+            message: `Error fetching movies in theatre` 
+        }
+    }
+}
+
+const checkMovieTheatre = async (theatreId,movieId) => {
+    try{
+        const movies = await Theatre.find({_id:theatreId,movies: movieId}).populate("movies");
+        if (!movies) {
+            return {
+                err: 'No Movie found',
+                code: 404,
+                message: `No movie found matching the theatre` 
+            }
+        }
         return movies;
     }
     catch(error){
@@ -199,5 +227,6 @@ module.exports = {
     updateTheatre,
     fetchTheatres,
     updateMoviesTheatre,
-    getMoviesTheatre
+    getMoviesTheatre,
+    checkMovieTheatre
 }
