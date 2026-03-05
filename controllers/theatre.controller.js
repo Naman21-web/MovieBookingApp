@@ -151,6 +151,26 @@ const getMoviesTheatre = async (req,res) => {
         errorResponseBody.message = "Failed to retrieve theatres";
         res.status(500).json(errorResponseBody);  
     }
+};
+
+const checkMovieTheatre = async (req,res) => {
+    try{
+        const {theatreId,movieId} = req.params;
+        const response = await TheatreService.checkMovieTheatre(theatreId,movieId);
+        if(response.err){
+            errorResponseBody.err = response.err;
+            errorResponseBody.message = response.message;
+            return res.status(response.code).json(errorResponseBody);
+        }
+        successResponseBody.data = response;
+        successResponseBody.message = "Movie in Theatre fetched successfully";
+        res.status(200).json(successResponseBody);        
+    }
+    catch(error){
+      errorResponseBody.err = error.message;
+        errorResponseBody.message = "Failed to retrieve movie from theatre";
+        res.status(500).json(errorResponseBody);  
+    }
 }
 
 module.exports = {
@@ -160,5 +180,6 @@ module.exports = {
     updateTheatre,
     getTheatres,
     updateMoviesTheatre,
-    getMoviesTheatre
+    getMoviesTheatre,
+    checkMovieTheatre
 }
