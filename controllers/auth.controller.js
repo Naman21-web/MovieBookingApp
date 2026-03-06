@@ -5,6 +5,7 @@ const {successResponseBody, errorResponseBody} = require('../utils/responseBody'
 const signup = async (req,res) => {
     try{
        const response = await userService.createUser(req.body);
+       console.log(response);
         if(response.err){
             errorResponseBody.err = response.err;
             errorResponseBody.message = response.message;
@@ -20,7 +21,7 @@ const signup = async (req,res) => {
             errorResponseBody.message = "Validation Failed, cannot create user profile"; 
             res.status(error.code).json(errorResponseBody);
         }
-        errorResponseBody.err = error.message;
+        errorResponseBody.err = error;
         errorResponseBody.message = "Failed to create user profile";
         res.status(500).json(errorResponseBody);
     }
