@@ -15,6 +15,11 @@ const signup = async (req,res) => {
         res.status(201).json(successResponseBody); 
     }
     catch(error){
+        if(error.err){
+           errorResponseBody.err = error.err;
+            errorResponseBody.message = "Validation Failed, cannot create user profile"; 
+            res.status(error.code).json(errorResponseBody);
+        }
         errorResponseBody.err = error.message;
         errorResponseBody.message = "Failed to create user profile";
         res.status(500).json(errorResponseBody);
