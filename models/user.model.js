@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -31,6 +32,16 @@ const userSchema = new mongoose.Schema({
         default: "APPROVED"
     }
 },{timestamps: true});
+
+userSchema.pre('save', async function() {
+    //trigger to encrypt the plain password before saving password
+    try {
+        const hash = await bcrypt.hash(this.password, 10);
+        this.password = hash;
+    } catch (error) {
+        throw error; // Let Mongoose handle the error
+    }
+});
 
 const User = mongoose.model('User',userSchema);
 
