@@ -18,7 +18,6 @@ const createUser = async(data) => {
         return response;
     }
     catch(error){
-        console.log(error);
         if(error.name == 'ValidationError'){
             let err = {};
             Object.keys(error.errors).forEach((key) => {
@@ -33,6 +32,79 @@ const createUser = async(data) => {
     }
 };
 
+const loginUser = async (data) => {
+    try{
+        const email = data.email;
+        const user = await User.findOne({email});
+        if(!user){
+            throw {
+                err: 'No User found',
+                code: 404,
+                message: `No user found matching the details` 
+            }
+        }
+        const isValidPassword = await user.isValidPassword(data.password);
+        if(!isValidPassword){
+            throw {
+                err: "Invalid user details",
+                code: 401,
+                message: `No user found matching the details` 
+            }
+        }
+        return user;
+    }
+    catch(error){
+        if(error.name == 'ValidationError'){
+            let err = {};
+            Object.keys(error.errors).forEach((key) => {
+                err[key] = error.errors[key].message;
+            });
+            throw {
+                err: err,
+                code: 422
+            };
+        }
+        throw error;
+    }
+}
+
+const getUserByEmail = async (email) => {
+    try{
+        const response = await User.findOne({
+            email
+        });
+        if(!response){
+            throw {
+                err: "Invalid user details",
+                code: 404
+            }
+        }
+    }
+    catch(error){
+        console.log(error);
+        throw error;
+    }
+}
+
+const getUserById = async (id) => {
+    try{
+        const user = await User.findById(id);
+        if(!user){
+            throw {
+                err: "No user found",
+                code: 404
+            }
+        }
+        return user;
+    }
+    catch(error){
+        console.log(error);
+        throw error;
+    }
+}
+
 module.exports = {
-    createUser
+    createUser,
+    loginUser,
+    getUserById
 }

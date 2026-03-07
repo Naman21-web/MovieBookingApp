@@ -1,11 +1,10 @@
 const userService = require('../service/user.service');
 const {successResponseBody, errorResponseBody} = require('../utils/responseBody');
-
+const jwt =  require('jsonwebtoken');
 
 const signup = async (req,res) => {
     try{
        const response = await userService.createUser(req.body);
-       console.log(response);
         if(response.err){
             errorResponseBody.err = response.err;
             errorResponseBody.message = response.message;
@@ -13,20 +12,57 @@ const signup = async (req,res) => {
         }
         successResponseBody.data = response;
         successResponseBody.message = "User Profile created successfully";
-        res.status(201).json(successResponseBody); 
+        return res.status(201).json(successResponseBody); 
     }
     catch(error){
         if(error.err){
            errorResponseBody.err = error.err;
             errorResponseBody.message = "Validation Failed, cannot create user profile"; 
-            res.status(error.code).json(errorResponseBody);
+            return res.status(error.code).json(errorResponseBody);
         }
         errorResponseBody.err = error;
         errorResponseBody.message = "Failed to create user profile";
-        res.status(500).json(errorResponseBody);
+        return res.status(500).json(errorResponseBody);
     }
 }
 
+const signin = async ( req,res) => {
+    try{
+        const response = await userService.loginUser(req.body);
+        if(response.err){
+            errorResponseBody.err = response.err;
+            errorResponseBody.message = response.message;
+            return res.status(response.code).json(errorResponseBody);
+        }
+
+        const token = jwt.sign(
+            {id: response.id, email:response.email},process.env.JWT_KEY,
+            {expiresIn: '1h'}
+        );
+
+        successResponseBody.data = {
+            email:  response.email,
+            role: response.userRole,
+            status: response.userStatus,
+            token: token
+        };
+        successResponseBody.message = "User Profile logged in successfully";
+        return res.status(201).json(successResponseBody); 
+    }
+    catch(error){
+        if(error.err){
+           errorResponseBody.err = error.err;
+            if(error.message) errorResponseBody.message = error.message;
+            else errorResponseBody.message = "Validation Failed, cannot login to user profile"; 
+            return res.status(error.code).json(errorResponseBody);
+        }
+        errorResponseBody.err = error.message;
+        errorResponseBody.message = "Failed to login to user profile";
+        return res.status(500).json(errorResponseBody);
+    }
+} 
+
 module.exports = {
-    signup
+    signup,
+    signin
 }
