@@ -49,6 +49,32 @@ const validateLoginRequest = async (req,res,next) => {
     next();
 }
 
+const validateResetPasswordRequest = async (req,res,next) => {
+    if(!req.body){
+        badRequestResponse.err = "Request body is missing or empty";
+        return res.status(400).json(badRequestResponse);
+    }
+
+    if(!req.body.email){
+        badRequestResponse.err = "The email param is not present in the request sent";
+        return res.status(400).json(badRequestResponse);
+    }
+
+    if(!req.body.password){
+        badRequestResponse.err = "The password param is not present in the request sent";
+        return res.status(400).json(badRequestResponse);
+    }
+    if(!req.body.password){
+        badRequestResponse.err = "The password param is not present in the request sent";
+        return res.status(400).json(badRequestResponse);
+    }
+    if(!req.body.newPassword){
+        badRequestResponse.err = "The new password param is not present in the request sent";
+        return res.status(400).json(badRequestResponse);
+    }
+    next();
+}
+
 const isAuthenticated = async (req,res,next) => {
     try{
         const token = req.headers["x-access-token"];
@@ -85,5 +111,6 @@ const isAuthenticated = async (req,res,next) => {
 module.exports = {
     validateAuthRequest,
     validateLoginRequest,
+    validateResetPasswordRequest,
     isAuthenticated
 }

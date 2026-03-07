@@ -60,9 +60,42 @@ const signin = async ( req,res) => {
         errorResponseBody.message = "Failed to login to user profile";
         return res.status(500).json(errorResponseBody);
     }
+};
+
+const resetPassword = async (req,res) => {
+    try{
+        const response = await userService.resetPassword(req.body);
+        if(response.err){
+            errorResponseBody.err = response.err;
+            errorResponseBody.message = response.message;
+            return res.status(response.code).json(errorResponseBody);
+        }
+
+        // successResponseBody.data = {
+        //     email:  response.email,
+        //     role: response.userRole,
+        //     status: response.userStatus,
+        //     token: token
+        // };
+        successResponseBody.message = "User password reset successfull";
+        return res.status(200).json(successResponseBody); 
+
+    }
+    catch(error){
+        if(error.err){
+           errorResponseBody.err = error.err;
+            if(error.message) errorResponseBody.message = error.message;
+            else errorResponseBody.message = "Validation Failed, cannot reset password for user profile"; 
+            return res.status(error.code).json(errorResponseBody);
+        }
+        errorResponseBody.err = error.message;
+        errorResponseBody.message = "Failed to reset password for user profile";
+        return res.status(500).json(errorResponseBody);
+    }
 } 
 
 module.exports = {
     signup,
-    signin
+    signin,
+    resetPassword
 }

@@ -103,8 +103,34 @@ const getUserById = async (id) => {
     }
 }
 
+const resetPassword = async (data) => {
+    try{
+        const loginData = {
+            email: data.email,
+            password: data.password,
+        }
+        const user = await loginUser(loginData);
+        if(!user){
+            throw {
+                err: "Invalid user details",
+                code: 403
+            }
+        }
+        user.password = data.newPassword;
+        await user.save();
+        return user;
+    }
+    catch(error){
+        console.log(error);
+        if(error.code) error.code = 403;
+        throw error;
+    }
+};
+
 module.exports = {
     createUser,
     loginUser,
-    getUserById
+    getUserByEmail,
+    getUserById,
+    resetPassword
 }
