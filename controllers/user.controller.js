@@ -1,5 +1,6 @@
 const userService = require("../service/user.service");
 const { errorResponseBody, successResponseBody } = require("../utils/responseBody");
+const {STATUS} = require("../utils/constants");
 
 const updateUser = async (req,res) => {
     try{
@@ -11,7 +12,7 @@ const updateUser = async (req,res) => {
         }
         successResponseBody.message = "User details updated successfully";
         successResponseBody.data = response;
-        return res.status(200).json(successResponseBody);
+        return res.status(STATUS.OK).json(successResponseBody);
     }
     catch(error){
         if(error.err){
@@ -22,7 +23,7 @@ const updateUser = async (req,res) => {
         }
         errorResponseBody.err = error.message;
         errorResponseBody.message = "Failed to reset password for user profile";
-        return res.status(500).json(errorResponseBody);
+        return res.status(STATUS.INTERNAL_SERVER_ERROR).json(errorResponseBody);
     }
 };
 

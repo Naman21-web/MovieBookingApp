@@ -1,5 +1,5 @@
 const User = require("../models/user.model");
-const {USER_ROLE,USER_STATUS} = require('../utils/constants');
+const {USER_ROLE,USER_STATUS,STATUS} = require('../utils/constants');
 
 const createUser = async(data) => {
     try{
@@ -7,7 +7,7 @@ const createUser = async(data) => {
             if(data.userStatus && data.userStatus != USER_STATUS.approved){
                 throw {
                     err: "We cannot set any other status for User",
-                    code: 400
+                    code: STATUS.BAD_REQUEST
                 }
             }
         }
@@ -25,7 +25,7 @@ const createUser = async(data) => {
             });
             throw {
                 err: err,
-                code: 422
+                code: STATUS.UNPROCESSABLE
             };
         }
         throw error;
@@ -39,7 +39,7 @@ const loginUser = async (data) => {
         if(!user){
             throw {
                 err: 'No User found',
-                code: 404,
+                code: STATUS.NOT_FOUND,
                 message: `No user found matching the details` 
             }
         }
@@ -47,7 +47,7 @@ const loginUser = async (data) => {
         if(!isValidPassword){
             throw {
                 err: "Invalid user details",
-                code: 401,
+                code: STATUS.UNAUTHORISED,
                 message: `No user found matching the details` 
             }
         }
@@ -76,7 +76,7 @@ const getUserByEmail = async (email) => {
         if(!response){
             throw {
                 err: "Invalid user details",
-                code: 404
+                code: STATUS.NOT_FOUND
             }
         }
     }
@@ -91,7 +91,7 @@ const getUserById = async (id) => {
         if(!user){
             throw {
                 err: "No user found",
-                code: 404
+                code: STATUS.NOT_FOUND
             }
         }
         return user;
@@ -111,7 +111,7 @@ const resetPassword = async (data) => {
         if(!user){
             throw {
                 err: "Invalid user details",
-                code: 403
+                code: STATUS.FORBIDDEN
             }
         }
         user.password = data.newPassword;
@@ -119,7 +119,7 @@ const resetPassword = async (data) => {
         return user;
     }
     catch(error){
-        if(error.code) error.code = 403;
+        if(error.code) error.code = STATUS.FORBIDDEN;
         throw error;
     }
 };
@@ -141,7 +141,7 @@ const updateUserRoleOrStatus = async (data,userId) => {
         );
         if(!response) throw {
             err: "No user found for the given id",
-            code: 404
+            code: STATUS.NOT_FOUND
         };
         return response;
     }
@@ -153,7 +153,7 @@ const updateUserRoleOrStatus = async (data,userId) => {
             });
             throw {
                 err: err,
-                code: 422,
+                code: STATUS.UNPROCESSABLE,
                 message: "Validation error while updating theatre"
             }
         }
