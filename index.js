@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const MovieRoutes = require('./routes/movie.routes');
 const TheatreRoutes = require('./routes/theatre.routes');
 const AuthRoutes = require('./routes/auth.routes');
+const UserRoutes = require('./routes/user.routes');
 
 env.config();
 const app = express();
@@ -16,6 +17,7 @@ app.use(bodyParser.json());
 MovieRoutes(app); //Invoking movie routes
 TheatreRoutes(app); //Invoking theatre routes
 AuthRoutes(app); //invoking auth routes
+UserRoutes(app); //invoking user routes
 
 app.get('/', (req, res) => {
   return res.json({

@@ -81,7 +81,6 @@ const getUserByEmail = async (email) => {
         }
     }
     catch(error){
-        console.log(error);
         throw error;
     }
 }
@@ -98,7 +97,6 @@ const getUserById = async (id) => {
         return user;
     }
     catch(error){
-        console.log(error);
         throw error;
     }
 }
@@ -121,16 +119,47 @@ const resetPassword = async (data) => {
         return user;
     }
     catch(error){
-        console.log(error);
         if(error.code) error.code = 403;
         throw error;
     }
 };
+
+const updateUserRoleOrStatus = async (data,userId) => {
+    try{
+        let updateQuery = {};
+        if(data.userRole) updateQuery.userRole = data.userRole;
+        if(data.userStatus) updateQuery.userStatus = data.userStatus;
+        let response = await User.findOneAndUpdate({
+            id:userId
+        },updateQuery, {returnDocument: "after",
+            runValidators: true, projection: {password: 0}});
+        if(!response) throw {
+            err: "No user found for the given id",
+            code: 404
+        };
+        return response;
+    }
+    catch(error){
+        if(error.name === 'ValidationError'){
+            let err = {};
+            Object.keys(error.errors).forEach((key) => {
+                err[key] = error.errors[key].message;
+            });
+            throw {
+                err: err,
+                code: 422,
+                message: "Validation error while updating theatre"
+            }
+        }
+        throw error;
+    }
+}
 
 module.exports = {
     createUser,
     loginUser,
     getUserByEmail,
     getUserById,
-    resetPassword
+    resetPassword,
+    updateUserRoleOrStatus
 }
