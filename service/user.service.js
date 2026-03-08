@@ -129,10 +129,16 @@ const updateUserRoleOrStatus = async (data,userId) => {
         let updateQuery = {};
         if(data.userRole) updateQuery.userRole = data.userRole;
         if(data.userStatus) updateQuery.userStatus = data.userStatus;
-        let response = await User.findOneAndUpdate({
-            id:userId
-        },updateQuery, {returnDocument: "after",
-            runValidators: true, projection: {password: 0}});
+        let response = await User.findOneAndUpdate(
+            {
+                _id:userId
+            },
+            updateQuery, {
+                returnDocument: "after",
+                runValidators: true, 
+                projection: {password: 0}
+            }
+        );
         if(!response) throw {
             err: "No user found for the given id",
             code: 404
