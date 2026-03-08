@@ -8,7 +8,7 @@ const badRequestResponse = {
     message: "Malformed Request | Bad Request"
 }
 
-const validateAuthRequest = async (req,res,next) => {
+const validateSignUpRequest = async (req,res,next) => {
     if(!req.body){
         badRequestResponse.err = "Request body is missing or empty";
         return res.status(400).json(badRequestResponse);
@@ -108,7 +108,7 @@ const isAuthenticated = async (req,res,next) => {
 };
 
 module.exports = {
-    validateAuthRequest,
+    validateSignUpRequest,
     validateLoginRequest,
     validateResetPasswordRequest,
     isAuthenticated
