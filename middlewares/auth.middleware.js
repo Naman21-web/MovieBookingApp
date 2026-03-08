@@ -1,5 +1,6 @@
 const userService = require("../service/user.service");
 const jwt =  require('jsonwebtoken');
+const { USER_ROLE } = require("../utils/constants");
 
 const badRequestResponse = {
     success: false,
@@ -107,9 +108,38 @@ const isAuthenticated = async (req,res,next) => {
     }
 };
 
+const isAdmin = async (req,res,next) => {
+    const user = await userService.getUserById(req.user);
+    if(user.userRole != USER_ROLE.admin){
+        badRequestResponse.err = "User is not authorised to perform this action";
+        return res.status(401).json(badRequestResponse);
+    }
+    next();
+};
+
+const isClient = async (req,res,next) => {
+    const user = await userService.getUserById(req.user);
+    if(user.userRole != USER_ROLE.client){
+        badRequestResponse.err = "User is not authorised to perform this action";
+        return res.status(401).json(badRequestResponse);
+    }
+    next();
+};
+
+const isAdminOrClient = async (req,res,next) => {
+    const user = await userService.getUserById(req.user);
+    if(user.userRole != USER_ROLE.client && user.userRole != USER_ROLE.admin){
+        badRequestResponse.err = "User is not authorised to perform this action";
+        return res.status(401).json(badRequestResponse);
+    }
+    next();
+};
+
 module.exports = {
     validateSignUpRequest,
     validateLoginRequest,
     validateResetPasswordRequest,
-    isAuthenticated
+    isAuthenticated,
+    isAdmin,
+    isClient
 }

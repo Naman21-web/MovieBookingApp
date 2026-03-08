@@ -4,7 +4,6 @@ const { errorResponseBody, successResponseBody } = require("../utils/responseBod
 const updateUser = async (req,res) => {
     try{
         const response = await userService.updateUserRoleOrStatus(req.body,req.params.userId);
-        console.log("Response :",response);
         if(response.err){
             errorResponseBody.err = response.err;
             errorResponseBody.message = response.message;
@@ -15,7 +14,6 @@ const updateUser = async (req,res) => {
         return res.status(200).json(successResponseBody);
     }
     catch(error){
-        console.log(error);
         if(error.err){
             errorResponseBody.err = error.err;
             if(error.message) errorResponseBody.message = error.message;
