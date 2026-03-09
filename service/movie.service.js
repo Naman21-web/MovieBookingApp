@@ -1,4 +1,6 @@
 const Movie = require('../models/movie.model');
+const { STATUS } = require("../utils/constants");
+
 
 const createMovie = async (req, res) => {
     try {
@@ -6,9 +8,9 @@ const createMovie = async (req, res) => {
         await movie.save();
         return movie;
     } catch (error) {
-        return {
+        throw {
                 err: error.message,
-                code: 500,
+                code: STATUS.INTERNAL_SERVER_ERROR,
                 message: `Error creating movie` 
             }
     }
