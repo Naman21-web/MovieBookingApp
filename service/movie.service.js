@@ -61,18 +61,18 @@ const updateMovie = async (id,updateData) => {
         const movie = await Movie.findByIdAndUpdate(id, updateData, {new: true});
         //New: true option returns the updated document instead of the original document
         if(!movie) {
-            return {
+            throw {
                 err: 'Movie not found',
-                code: 404,
+                code: STATUS.NOT_FOUND,
                 message: `No movie found with id ${id}` 
             }
         }
         return movie;
     }
     catch(error){
-        return {
+        throw {
             err: error.message,
-            code: 500,
+            code: STATUS.INTERNAL_SERVER_ERROR,
             message: `Error updating movie with id ${id}` 
         }
     }

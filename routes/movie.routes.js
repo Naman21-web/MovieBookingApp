@@ -12,8 +12,12 @@ const routes = (app) => {
         AuthMiddleware.isAdminOrClient,
         MovieController.deleteMovie);
     app.get('/mba/api/v1/movies/:movieId', MovieController.getMovie);
-    app.put('/mba/api/v1/movies/:movieId', MovieController.updateMovie);  
-    app.patch('/mba/api/v1/movies/:movieId', MovieController.updateMovie);
+    app.put('/mba/api/v1/movies/:movieId', 
+        AuthMiddleware.isAuthenticated,
+        AuthMiddleware.isAdminOrClient,MovieController.updateMovie);  
+    app.patch('/mba/api/v1/movies/:movieId', 
+        AuthMiddleware.isAuthenticated,
+        AuthMiddleware.isAdminOrClient,MovieController.updateMovie);
     app.get('/mba/api/v1/movies', MovieController.getMovies);
 }
 
