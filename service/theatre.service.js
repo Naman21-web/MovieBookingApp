@@ -14,13 +14,13 @@ const createTheatre = async (data) => {
             Object.keys(error.errors).forEach((key) => {
                 err[key] = error.errors[key].message;
             });
-            return {
+            throw {
                 err: err,
                 code: STATUS.UNPROCESSABLE,
                 message: "Validation error while creating theatre"
             }
         }
-        return {
+        throw {
             err: error.message,
             code: STATUS.INTERNAL_SERVER_ERROR,
             message: "Error creating theatre"
@@ -32,7 +32,7 @@ const deleteTheatre = async(id) => {
     try{
         const theatre = await Theatre.findByIdAndDelete(id);
         if(!theatre){
-            return {
+            throw {
                 err: 'Theatre not found',
                 code: STATUS.NOT_FOUND,
                 message: `No theatre found with id ${id}` 
@@ -41,7 +41,7 @@ const deleteTheatre = async(id) => {
         return theatre;
     }
     catch(error){
-        return {
+        throw {
             err: error.message,
             code: STATUS.INTERNAL_SERVER_ERROR,
             message: "Error deleting Theatre"
@@ -53,7 +53,7 @@ const getTheatreById = async (id) => {
     try{
         const theatre = await Theatre.findById(id);
         if(!theatre){
-            return {
+            throw {
                 err: 'Theatre not found',
                 code: STATUS.NOT_FOUND,
                 message: `No theatre found with id ${id}` 
@@ -62,7 +62,7 @@ const getTheatreById = async (id) => {
         return theatre;
     }
     catch(error){
-        return {
+        throw {
             err: error.message,
             code: STATUS.INTERNAL_SERVER_ERROR,
             message: "Error getting theatre"

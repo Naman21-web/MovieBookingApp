@@ -18,16 +18,17 @@ const {STATUS} =  require("../utils/constants");
 const createTheatre = async (req, res) => {
     try{
         const response = await TheatreService.createTheatre(req.body);
-        if(response.err){
-            errorResponseBody.err = response.err;
-            errorResponseBody.message = response.message;
-            return res.status(response.code).json(errorResponseBody);
-        }
+        
         successResponseBody.data = response;
         successResponseBody.message = "Theatre created successfully";
         res.status(STATUS.CREATED).json(successResponseBody);
     }
     catch(error){
+        if(error.err){
+            errorResponseBody.err = error.err;
+            errorResponseBody.message = error.message;
+            return res.status(error.code).json(errorResponseBody);
+        }
         errorResponseBody.err = error.message;
         errorResponseBody.message = "Failed to create theatre";
         res.status(STATUS.INTERNAL_SERVER_ERROR).json(errorResponseBody); 
@@ -38,16 +39,17 @@ const deleteTheatre = async (req,res) => {
     try{
         const id = req.params.theatreId;
         const response = await TheatreService.deleteTheatre(id);
-        if(response.err){
-            errorResponseBody.err = response.err;
-            errorResponseBody.message = response.message;
-            return res.status(response.code).json(errorResponseBody);
-        }
+        
         successResponseBody.data = response;
         successResponseBody.message = 'Theatre deleted successfully';
         return res.status(STATUS.OK).json(successResponseBody);
     }
     catch(error){
+        if(error.err){
+            errorResponseBody.err = error.err;
+            errorResponseBody.message = error.message;
+            return res.status(error.code).json(errorResponseBody);
+        }
         errorResponseBody.err = error.message;
         errorResponseBody.message = "Failed to delete theatre";
         res.status(STATUS.INTERNAL_SERVER_ERROR).json(errorResponseBody);     }
@@ -57,16 +59,16 @@ const getTheatre = async (req,res) => {
     try{
         const id = req.params.theatreId;
         const response = await TheatreService.getTheatreById(id);
-        if(response.err){
-            errorResponseBody.err = response.err;
-            errorResponseBody.message = response.message;
-            return res.status(response.code).json(errorResponseBody);
-        }
         successResponseBody.data = response;
         successResponseBody.message = "Theatre retrieved successfully";
         return res.status(STATUS.CREATED).json(successResponseBody);
     }
     catch(error){
+        if(error.err){
+            errorResponseBody.err = error.err;
+            errorResponseBody.message = error.message;
+            return res.status(error.code).json(errorResponseBody);
+        }
         errorResponseBody.err = error.message;
         errorResponseBody.message = "Failed to get theatre";
         res.status(STATUS.INTERNAL_SERVER_ERROR).json(errorResponseBody);

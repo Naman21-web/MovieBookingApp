@@ -7,7 +7,10 @@ const routes = (app) => {
         AuthMiddleware.isAuthenticated,
         AuthMiddleware.isAdminOrClient,
         TheatreMiddleware.validateTheatreCreateRequest,TheatreController.createTheatre);
-    app.delete('/mba/api/v1/theatres/:theatreId',AuthMiddleware.isAuthenticated,TheatreController.deleteTheatre);
+    app.delete('/mba/api/v1/theatres/:theatreId',
+        AuthMiddleware.isAuthenticated,
+        AuthMiddleware.isAdminOrClient,
+        TheatreController.deleteTheatre);
     app.get('/mba/api/v1/theatres/:theatreId',TheatreController.getTheatre);
     app.put('/mba/api/v1/theatres/:theatreId', TheatreController.updateTheatre);  
     app.patch('/mba/api/v1/theatres/:theatreId', TheatreController.updateTheatre);
