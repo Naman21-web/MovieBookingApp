@@ -20,11 +20,7 @@ const createTheatre = async (data) => {
                 message: "Validation error while creating theatre"
             }
         }
-        throw {
-            err: error.message,
-            code: STATUS.INTERNAL_SERVER_ERROR,
-            message: "Error creating theatre"
-        }
+        throw error;
     }
 };
 
@@ -41,11 +37,7 @@ const deleteTheatre = async(id) => {
         return theatre;
     }
     catch(error){
-        throw {
-            err: error.message,
-            code: STATUS.INTERNAL_SERVER_ERROR,
-            message: "Error deleting Theatre"
-        }
+        throw error;
     }
 }
 
@@ -62,11 +54,7 @@ const getTheatreById = async (id) => {
         return theatre;
     }
     catch(error){
-        throw {
-            err: error.message,
-            code: STATUS.INTERNAL_SERVER_ERROR,
-            message: "Error getting theatre"
-        }
+        throw error;
     }
 };
 
@@ -95,11 +83,7 @@ const updateTheatre = async (id,updateData) => {
                 message: "Validation error while updating theatre"
             }
         }
-        throw {
-            err: error.message,
-            code: STATUS.INTERNAL_SERVER_ERROR,
-            message: `Error updating theatre with id ${id}` 
-        }
+        throw error;
     }
 };
 
@@ -138,11 +122,7 @@ const fetchTheatres = async (data) => {
         return theatres;
     }
     catch(error){
-        throw {
-            err: error.message,
-            code: STATUS.INTERNAL_SERVER_ERROR,
-            message: `Error fetching theatres` 
-        }
+        throw error;
     }
 };
 
@@ -170,11 +150,7 @@ const updateMoviesTheatre = async (theatreId,movieIds,insert) => {
         return theatre;
     }
     catch(error){
-        throw {
-            err: error.message,
-            code: STATUS.INTERNAL_SERVER_ERROR,
-            message: `Error updating movies in theatre` 
-        }
+        throw error;
     }
 }
 
@@ -191,11 +167,7 @@ const getMoviesTheatre = async (theatreId,movieId) => {
         return movies;
     }
     catch(error){
-        throw {
-            err: error.message,
-            code: STATUS.INTERNAL_SERVER_ERROR,
-            message: `Error fetching movies in theatre` 
-        }
+        throw error;
     }
 }
 
@@ -212,11 +184,7 @@ const checkMovieTheatre = async (theatreId,movieId) => {
         return movies;
     }
     catch(error){
-        throw {
-            err: error.message,
-            code: STATUS.INTERNAL_SERVER_ERROR,
-            message: `Error updating movies in theatre` 
-        }
+        throw error;
     }
 }
 

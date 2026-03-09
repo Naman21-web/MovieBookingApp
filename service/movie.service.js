@@ -8,11 +8,7 @@ const createMovie = async (req, res) => {
         await movie.save();
         return movie;
     } catch (error) {
-        throw {
-                err: error.message,
-                code: STATUS.INTERNAL_SERVER_ERROR,
-                message: `Error creating movie` 
-            }
+        throw error;
     }
 };
 
@@ -28,11 +24,7 @@ const deleteMovie = async (id) => {
         }
         return movie;
     } catch (error) {
-        throw {
-                err: error.message,
-                code: STATUS.INTERNAL_SERVER_ERROR,
-                message: `Error deleting movie with id ${id}`
-            }
+        throw error;
     }
 };
 
@@ -48,11 +40,7 @@ const getMovieById = async (id) => {
         }
         return movie;
     } catch (error) {
-        throw {
-                err: error.message,
-                code: STATUS.INTERNAL_SERVER_ERROR,
-                message: `Error retrieving movie with id ${id}` 
-            }
+        throw error;
     }   
 };
 
@@ -70,11 +58,7 @@ const updateMovie = async (id,updateData) => {
         return movie;
     }
     catch(error){
-        throw {
-            err: error.message,
-            code: STATUS.INTERNAL_SERVER_ERROR,
-            message: `Error updating movie with id ${id}` 
-        }
+        throw error;
     }
 };
 
@@ -95,11 +79,7 @@ const fetchMovies = async (filter) => {
         return movies;
     }
     catch(error){
-        throw {
-            err: error.message,
-            code: STATUS.INTERNAL_SERVER_ERROR,
-            message: `Error fetching movies` 
-        }
+        throw error;
     }
 };
 
