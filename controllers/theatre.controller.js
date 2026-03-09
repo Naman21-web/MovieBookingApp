@@ -18,7 +18,6 @@ const {STATUS} =  require("../utils/constants");
 const createTheatre = async (req, res) => {
     try{
         const response = await TheatreService.createTheatre(req.body);
-        
         successResponseBody.data = response;
         successResponseBody.message = "Theatre created successfully";
         res.status(STATUS.CREATED).json(successResponseBody);
@@ -39,7 +38,6 @@ const deleteTheatre = async (req,res) => {
     try{
         const id = req.params.theatreId;
         const response = await TheatreService.deleteTheatre(id);
-        
         successResponseBody.data = response;
         successResponseBody.message = 'Theatre deleted successfully';
         return res.status(STATUS.OK).json(successResponseBody);
@@ -120,17 +118,17 @@ const updateMoviesTheatre = async (req,res) => {
         const {movieIds,insert} = req.body;
         const {theatreId} = req.params;
         const response = await TheatreService.updateMoviesTheatre(theatreId,movieIds,insert);
-        if(response.err){
-            errorResponseBody.err = response.err;
-            errorResponseBody.message = response.message;
-            return res.status(response.code).json(errorResponseBody);
-        }
         successResponseBody.data = response;
         successResponseBody.message = "Movies in Theatre updated successfully";
         res.status(STATUS.OK).json(successResponseBody);
     }
     catch(error){
-      errorResponseBody.err = error.message;
+        if(error.err){
+            errorResponseBody.err = error.err;
+            errorResponseBody.message = error.message;
+            return res.status(error.code).json(errorResponseBody);
+        }
+        errorResponseBody.err = error.message;
         errorResponseBody.message = "Failed to retrieve theatres";
         res.status(STATUS.INTERNAL_SERVER_ERROR).json(errorResponseBody);  
     }
@@ -140,17 +138,17 @@ const getMoviesTheatre = async (req,res) => {
     try{
         const {theatreId} = req.params;
         const response = await TheatreService.getMoviesTheatre(theatreId);
-        if(response.err){
-            errorResponseBody.err = response.err;
-            errorResponseBody.message = response.message;
-            return res.status(response.code).json(errorResponseBody);
-        }
         successResponseBody.data = response;
         successResponseBody.message = "Movies in Theatre fetched successfully";
         res.status(STATUS.OK).json(successResponseBody);
     }
     catch(error){
-      errorResponseBody.err = error.message;
+        if(error.err){
+            errorResponseBody.err = error.err;
+            errorResponseBody.message = error.message;
+            return res.status(error.code).json(errorResponseBody);
+        }
+        errorResponseBody.err = error.message;
         errorResponseBody.message = "Failed to retrieve theatres";
         res.status(STATUS.INTERNAL_SERVER_ERROR).json(errorResponseBody);  
     }
@@ -160,17 +158,17 @@ const checkMovieTheatre = async (req,res) => {
     try{
         const {theatreId,movieId} = req.params;
         const response = await TheatreService.checkMovieTheatre(theatreId,movieId);
-        if(response.err){
-            errorResponseBody.err = response.err;
-            errorResponseBody.message = response.message;
-            return res.status(response.code).json(errorResponseBody);
-        }
         successResponseBody.data = response;
         successResponseBody.message = "Movie in Theatre fetched successfully";
         res.status(STATUS.OK).json(successResponseBody);        
     }
     catch(error){
-      errorResponseBody.err = error.message;
+        if(error.err){
+            errorResponseBody.err = error.err;
+            errorResponseBody.message = error.message;
+            return res.status(error.code).json(errorResponseBody);
+        }
+        errorResponseBody.err = error.message;
         errorResponseBody.message = "Failed to retrieve movie from theatre";
         res.status(STATUS.INTERNAL_SERVER_ERROR).json(errorResponseBody);  
     }

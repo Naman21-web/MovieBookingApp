@@ -150,7 +150,7 @@ const updateMoviesTheatre = async (theatreId,movieIds,insert) => {
     try{
         const theatreExists = await Theatre.findById(theatreId);
         if (!theatreExists) {
-            return {
+            throw {
                 err: 'No theatres found',
                 code: STATUS.NOT_FOUND,
                 message: `No theatres found matching the criteria` 
@@ -170,7 +170,7 @@ const updateMoviesTheatre = async (theatreId,movieIds,insert) => {
         return theatre;
     }
     catch(error){
-        return {
+        throw {
             err: error.message,
             code: STATUS.INTERNAL_SERVER_ERROR,
             message: `Error updating movies in theatre` 
@@ -182,7 +182,7 @@ const getMoviesTheatre = async (theatreId,movieId) => {
     try{
         const movies = await Theatre.findById(theatreId,{movies:1,_id:0}).populate("movies");
         if (!movies) {
-            return {
+            throw {
                 err: 'No Movies found',
                 code: STATUS.NOT_FOUND,
                 message: `No movies found matching the theatre` 
@@ -191,7 +191,7 @@ const getMoviesTheatre = async (theatreId,movieId) => {
         return movies;
     }
     catch(error){
-        return {
+        throw {
             err: error.message,
             code: STATUS.INTERNAL_SERVER_ERROR,
             message: `Error fetching movies in theatre` 
@@ -203,7 +203,7 @@ const checkMovieTheatre = async (theatreId,movieId) => {
     try{
         const movies = await Theatre.find({_id:theatreId,movies: movieId}).populate("movies");
         if (!movies) {
-            return {
+            throw {
                 err: 'No Movie found',
                 code: STATUS.NOT_FOUND,
                 message: `No movie found matching the theatre` 
@@ -212,7 +212,7 @@ const checkMovieTheatre = async (theatreId,movieId) => {
         return movies;
     }
     catch(error){
-        return {
+        throw {
             err: error.message,
             code: STATUS.INTERNAL_SERVER_ERROR,
             message: `Error updating movies in theatre` 
