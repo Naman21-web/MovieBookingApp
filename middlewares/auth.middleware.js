@@ -141,5 +141,6 @@ module.exports = {
     validateResetPasswordRequest,
     isAuthenticated,
     isAdmin,
-    isClient
+    isClient,
+    isAdminOrClient
 }

@@ -1,5 +1,6 @@
 const Theatre = require('../models/theatre.model');
 const Movie = require('../models/movie.model');
+const { STATUS } = require("../utils/constants")
 
 const createTheatre = async (data) => {
     try{
@@ -15,13 +16,13 @@ const createTheatre = async (data) => {
             });
             return {
                 err: err,
-                code: 422,
+                code: STATUS.UNPROCESSABLE,
                 message: "Validation error while creating theatre"
             }
         }
         return {
             err: error.message,
-            code: 500,
+            code: STATUS.INTERNAL_SERVER_ERROR,
             message: "Error creating theatre"
         }
     }
@@ -33,7 +34,7 @@ const deleteTheatre = async(id) => {
         if(!theatre){
             return {
                 err: 'Theatre not found',
-                code: 404,
+                code: STATUS.NOT_FOUND,
                 message: `No theatre found with id ${id}` 
             }
         }
@@ -42,7 +43,7 @@ const deleteTheatre = async(id) => {
     catch(error){
         return {
             err: error.message,
-            code: 500,
+            code: STATUS.INTERNAL_SERVER_ERROR,
             message: "Error deleting Theatre"
         }
     }
@@ -54,7 +55,7 @@ const getTheatreById = async (id) => {
         if(!theatre){
             return {
                 err: 'Theatre not found',
-                code: 404,
+                code: STATUS.NOT_FOUND,
                 message: `No theatre found with id ${id}` 
             }
         }
@@ -63,7 +64,7 @@ const getTheatreById = async (id) => {
     catch(error){
         return {
             err: error.message,
-            code: 500,
+            code: STATUS.INTERNAL_SERVER_ERROR,
             message: "Error getting theatre"
         }
     }
@@ -76,7 +77,7 @@ const updateTheatre = async (id,updateData) => {
         if(!theatre) {
             return {
                 err: 'Theatre not found',
-                code: 404,
+                code: STATUS.NOT_FOUND,
                 message: `No theatre found with id ${id}` 
             }
         }
@@ -90,13 +91,13 @@ const updateTheatre = async (id,updateData) => {
             });
             return {
                 err: err,
-                code: 422,
+                code: STATUS.UNPROCESSABLE,
                 message: "Validation error while updating theatre"
             }
         }
         return {
             err: error.message,
-            code: 500,
+            code: STATUS.INTERNAL_SERVER_ERROR,
             message: `Error updating theatre with id ${id}` 
         }
     }
@@ -130,7 +131,7 @@ const fetchTheatres = async (data) => {
         if(theatres.length === 0) {
             return {
                 err: 'No theatres found',
-                code: 404,
+                code: STATUS.NOT_FOUND,
                 message: `No theatres found matching the criteria` 
             }
         }
@@ -139,7 +140,7 @@ const fetchTheatres = async (data) => {
     catch(error){
         return {
             err: error.message,
-            code: 500,
+            code: STATUS.INTERNAL_SERVER_ERROR,
             message: `Error fetching theatres` 
         }
     }
@@ -151,7 +152,7 @@ const updateMoviesTheatre = async (theatreId,movieIds,insert) => {
         if (!theatreExists) {
             return {
                 err: 'No theatres found',
-                code: 404,
+                code: STATUS.NOT_FOUND,
                 message: `No theatres found matching the criteria` 
             }
         }
@@ -171,7 +172,7 @@ const updateMoviesTheatre = async (theatreId,movieIds,insert) => {
     catch(error){
         return {
             err: error.message,
-            code: 500,
+            code: STATUS.INTERNAL_SERVER_ERROR,
             message: `Error updating movies in theatre` 
         }
     }
@@ -183,7 +184,7 @@ const getMoviesTheatre = async (theatreId,movieId) => {
         if (!movies) {
             return {
                 err: 'No Movies found',
-                code: 404,
+                code: STATUS.NOT_FOUND,
                 message: `No movies found matching the theatre` 
             }
         }
@@ -192,7 +193,7 @@ const getMoviesTheatre = async (theatreId,movieId) => {
     catch(error){
         return {
             err: error.message,
-            code: 500,
+            code: STATUS.INTERNAL_SERVER_ERROR,
             message: `Error fetching movies in theatre` 
         }
     }
@@ -204,7 +205,7 @@ const checkMovieTheatre = async (theatreId,movieId) => {
         if (!movies) {
             return {
                 err: 'No Movie found',
-                code: 404,
+                code: STATUS.NOT_FOUND,
                 message: `No movie found matching the theatre` 
             }
         }
@@ -213,7 +214,7 @@ const checkMovieTheatre = async (theatreId,movieId) => {
     catch(error){
         return {
             err: error.message,
-            code: 500,
+            code: STATUS.INTERNAL_SERVER_ERROR,
             message: `Error updating movies in theatre` 
         }
     }
