@@ -40,17 +40,17 @@ const getMovieById = async (id) => {
     try {
         const movie = await Movie.findById(id);
         if(!movie) {
-            return {
+            throw {
                 err: 'Movie not found',
-                code: 404,
+                code: STATUS.NOT_FOUND,
                 message: `No movie found with id ${id}` 
             }
         }
         return movie;
     } catch (error) {
-        return {
+        throw {
                 err: error.message,
-                code: 500,
+                code: STATUS.INTERNAL_SERVER_ERROR,
                 message: `Error retrieving movie with id ${id}` 
             }
     }   
@@ -86,18 +86,18 @@ const fetchMovies = async (filter) => {
         }
         const movies = await Movie.find(query);
         if(movies.length === 0) {
-            return {
+            throw {
                 err: 'No movies found',
-                code: 404,
+                code: STATUS.NOT_FOUND,
                 message: `No movies found matching the criteria` 
             }
         }
         return movies;
     }
     catch(error){
-        return {
+        throw {
             err: error.message,
-            code: 500,
+            code: STATUS.INTERNAL_SERVER_ERROR,
             message: `Error fetching movies` 
         }
     }

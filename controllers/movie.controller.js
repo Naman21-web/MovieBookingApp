@@ -64,19 +64,19 @@ const getMovie = async (req, res) => {
     try{
         const id = req.params.movieId;
         const response = await MovieService.getMovieById(id);
-        if(response.err){
-            errorResponseBody.err = response.err;
-            errorResponseBody.message = response.message;
-            return res.status(response.code).json(errorResponseBody);
-        }
         successResponseBody.data = response;
         successResponseBody.message = "Movie retrieved successfully";
-        res.status(200).json(successResponseBody);
+        res.status(STATUS.OK).json(successResponseBody);
     }
     catch(error){
+        if(error.err){
+            errorResponseBody.err = error.err;
+            errorResponseBody.message = error.message;
+            return res.status(error.code).json(errorResponseBody);
+        }
         errorResponseBody.err = error.message;
         errorResponseBody.message = "Failed to get movie";
-        res.status(500).json(errorResponseBody);    
+        res.status(STATUS.INTERNAL_SERVER_ERROR).json(errorResponseBody);    
     }
 };
 
@@ -104,19 +104,19 @@ const updateMovie = async (req, res) => {
 const getMovies = async (req,res) => {
     try{
         const response = await MovieService.fetchMovies(req.query);
-        if(response.err){
-            errorResponseBody.err = response.err;
-            errorResponseBody.message = response.message;
-            return res.status(response.code).json(errorResponseBody);
-        }
         successResponseBody.data = response;
         successResponseBody.message = "Movies retrieved successfully";
-        res.status(200).json(successResponseBody);
+        res.status(STATUS.OK).json(successResponseBody);
     }
     catch(error){
+        if(error.err){
+            errorResponseBody.err = error.err;
+            errorResponseBody.message = error.message;
+            return res.status(error.code).json(errorResponseBody);
+        }
         errorResponseBody.err = error.message;
         errorResponseBody.message = "Failed to retrieve movies";
-        res.status(500).json(errorResponseBody);
+        res.status(STATUS.INTERNAL_SERVER_ERROR).json(errorResponseBody);
     }
 }
 
