@@ -75,7 +75,7 @@ const updateTheatre = async (id,updateData) => {
         const theatre = await Theatre.findByIdAndUpdate(id, updateData, {returnDocument: 'after',runValidators:  true});
         //New: true option returns the updated document instead of the original document
         if(!theatre) {
-            return {
+            throw {
                 err: 'Theatre not found',
                 code: STATUS.NOT_FOUND,
                 message: `No theatre found with id ${id}` 
@@ -89,13 +89,13 @@ const updateTheatre = async (id,updateData) => {
             Object.keys(error.errors).forEach((key) => {
                 err[key] = error.errors[key].message;
             });
-            return {
+            throw {
                 err: err,
                 code: STATUS.UNPROCESSABLE,
                 message: "Validation error while updating theatre"
             }
         }
-        return {
+        throw {
             err: error.message,
             code: STATUS.INTERNAL_SERVER_ERROR,
             message: `Error updating theatre with id ${id}` 
@@ -129,7 +129,7 @@ const fetchTheatres = async (data) => {
         }
         const theatres = await Theatre.find(query,{},pagination);
         if(theatres.length === 0) {
-            return {
+            throw {
                 err: 'No theatres found',
                 code: STATUS.NOT_FOUND,
                 message: `No theatres found matching the criteria` 
@@ -138,7 +138,7 @@ const fetchTheatres = async (data) => {
         return theatres;
     }
     catch(error){
-        return {
+        throw {
             err: error.message,
             code: STATUS.INTERNAL_SERVER_ERROR,
             message: `Error fetching theatres` 

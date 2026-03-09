@@ -80,16 +80,16 @@ const updateTheatre = async (req, res) => {
         const id = req.params.theatreId;
         const updateData = req.body;
         const response = await TheatreService.updateTheatre(id, updateData);
-        if(response.err){
-            errorResponseBody.err = response.err;
-            errorResponseBody.message = response.message;
-            return res.status(response.code).json(errorResponseBody);
-        }
         successResponseBody.data = response;
         successResponseBody.message = "Theatre updated successfully";
         res.status(STATUS.CREATED).json(successResponseBody);
     }
     catch(error){
+        if(error.err){
+            errorResponseBody.err = error.err;
+            errorResponseBody.message = error.message;
+            return res.status(error.code).json(errorResponseBody);
+        }
         errorResponseBody.err = error.message;
         errorResponseBody.message = "Failed to update theatre";
         res.status(STATUS.INTERNAL_SERVER_ERROR).json(errorResponseBody);
@@ -99,16 +99,16 @@ const updateTheatre = async (req, res) => {
 const getTheatres = async (req,res) => {
     try{
         const response = await TheatreService.fetchTheatres(req.query);
-        if(response.err){
-            errorResponseBody.err = response.err;
-            errorResponseBody.message = response.message;
-            return res.status(response.code).json(errorResponseBody);
-        }
         successResponseBody.data = response;
         successResponseBody.message = "Theatres retrieved successfully";
         res.status(STATUS.OK).json(successResponseBody);
     }
     catch(error){
+        if(error.err){
+            errorResponseBody.err = error.err;
+            errorResponseBody.message = error.message;
+            return res.status(error.code).json(errorResponseBody);
+        }
         errorResponseBody.err = error.message;
         errorResponseBody.message = "Failed to retrieve theatres";
         res.status(STATUS.INTERNAL_SERVER_ERROR).json(errorResponseBody);
