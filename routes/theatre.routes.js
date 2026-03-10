@@ -21,7 +21,11 @@ const routes = (app) => {
         AuthMiddleware.isAdminOrClient, 
         TheatreController.updateTheatre);
     app.get('/mba/api/v1/theatres', TheatreController.getTheatres);
-    app.patch('/mba/api/v1/theatres/:theatreId/movies',TheatreMiddleware.validateUpdateMovies,TheatreController.updateMoviesTheatre);
+    app.patch('/mba/api/v1/theatres/:theatreId/movies', 
+        AuthMiddleware.isAuthenticated,
+        AuthMiddleware.isAdminOrClient, 
+        TheatreMiddleware.validateUpdateMovies,
+        TheatreController.updateMoviesTheatre);
     app.get('/mba/api/v1/theatres/:theatreId/movies',TheatreController.getMoviesTheatre);
     app.get('/mba/api/v1/theatres/:theatreId/movie/:movieId',TheatreController.checkMovieTheatre);
 }
