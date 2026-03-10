@@ -6,6 +6,7 @@ const MovieRoutes = require('./routes/movie.routes');
 const TheatreRoutes = require('./routes/theatre.routes');
 const AuthRoutes = require('./routes/auth.routes');
 const UserRoutes = require('./routes/user.routes');
+const BookingRoutes = require('./routes/booking.routes');
 
 env.config();
 const app = express();
@@ -18,6 +19,7 @@ MovieRoutes(app); //Invoking movie routes
 TheatreRoutes(app); //Invoking theatre routes
 AuthRoutes(app); //invoking auth routes
 UserRoutes(app); //invoking user routes
+BookingRoutes(app);//invoking bookung routes
 
 app.get('/', (req, res) => {
   return res.json({

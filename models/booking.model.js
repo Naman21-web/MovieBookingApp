@@ -33,7 +33,7 @@ const bookingSchema = new mongoose.Schema({
         required: true,
         enum: {
             values: [BOOKING_STATUS.processing,BOOKING_STATUS.cancelled,BOOKING_STATUS.successful],
-            message: "Invali booking status"
+            message: "Invalid booking status"
         },
         default: BOOKING_STATUS.processing
     }
