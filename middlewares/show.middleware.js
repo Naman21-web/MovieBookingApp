@@ -78,6 +78,45 @@ const validateCreateShowRequest = async (req,res,next) => {
     next();
 };
 
+const validateGetShowRequest = async (req,res,next) => {
+
+    if(req.query.theatreId && !ObjectId.isValid(req.query.theatreId)){
+        badRequestResponse.err = "Invalid theatreId format for show in the request sent";
+        return res.status(STATUS.BAD_REQUEST).json(badRequestResponse);        
+    }
+
+    let theatre;
+    if(req.query.theatreId){
+        theatre = await Theatre.findById(req.query.theatreId);
+        if (!theatre) {
+            badRequestResponse.err = 'Invalid theatreId for show in the request sent';
+            return res.status(STATUS.BAD_REQUEST).json(badRequestResponse);    
+        }
+    }    
+
+    if(req.query.movieId && !ObjectId.isValid(req.query.movieId)){
+        badRequestResponse.err = "Invalid movieId format for show in the request sent";
+        return res.status(STATUS.BAD_REQUEST).json(badRequestResponse);        
+    }
+
+    if(req.query.movieId){
+        const movie = await Movie.findById(req.query.movieId);
+        if (!movie) {
+            badRequestResponse.err = 'Invalid movieId for show in the request sent';
+            return res.status(STATUS.BAD_REQUEST).json(badRequestResponse);     
+        }
+    }    
+
+    if (req.query.movieId && req.query.theatreId && !theatre.movies.includes(req.query.movieId)) {
+        badRequestResponse.err = 'No movie found matching the theatre';
+        return res.status(STATUS.BAD_REQUEST).json(badRequestResponse);     
+    }
+
+    //If all validations pass, call the next middleware or controller
+    next();
+};
+
 module.exports = {
-    validateCreateShowRequest
+    validateCreateShowRequest,
+    validateGetShowRequest
 }
