@@ -116,7 +116,25 @@ const validateGetShowRequest = async (req,res,next) => {
     next();
 };
 
+const validateShowUpdateRequest = async (req,res,next) => {
+    //validate request body
+    if(!req.body || Object.keys(req.body).length === 0){
+        badRequestResponse.err = "Request body is missing or empty";
+        return res.status(STATUS.BAD_REQUEST).json(badRequestResponse);
+    }
+
+    //validate the show theatreId
+    if(req.body.theatreId || req.body.movieId){
+        badRequestResponse.err = "You cannot update theatre/movie once show is created";
+        return res.status(STATUS.BAD_REQUEST).json(badRequestResponse);
+    }
+
+    //If all validations pass, call the next middleware or controller
+    next();
+};
+
 module.exports = {
     validateCreateShowRequest,
-    validateGetShowRequest
+    validateGetShowRequest,
+    validateShowUpdateRequest
 }

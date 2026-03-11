@@ -18,6 +18,12 @@ const routes = (app) => {
         AuthMiddleware.isAdminOrClient,
         ShowController.deleteShow
     )
+    app.patch("/mba/api/v1/shows/:showId",
+        AuthMiddleware.isAuthenticated,
+        AuthMiddleware.isAdminOrClient,
+        ShowMiddleware.validateShowUpdateRequest,
+        ShowController.updateShow
+    )
 };
 
 module.exports = routes;
