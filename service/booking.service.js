@@ -52,9 +52,7 @@ const updateBooking = async (data,bookingId) => {
 
 const getBookings = async (data) => {
     try{
-        const response = await Booking.find({
-            userId: data.userId
-        });
+        const response = await Booking.find(data);
         return response;
     }
     catch(error){

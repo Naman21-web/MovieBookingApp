@@ -36,7 +36,7 @@ const updateBooking = async (req,res) => {
             return res.status(error.code).json(errorResponseBody);
         }
         errorResponseBody.err = error.message;
-        errorResponseBody.message = "Failed to create booking";
+        errorResponseBody.message = "Failed to update booking";
         res.status(STATUS.INTERNAL_SERVER_ERROR).json(errorResponseBody);
     }
 };
@@ -55,7 +55,7 @@ const getBookings = async (req,res) => {
             return res.status(error.code).json(errorResponseBody);
         }
         errorResponseBody.err = error.message;
-        errorResponseBody.message = "Failed to create booking";
+        errorResponseBody.message = "Failed to get bookings";
         res.status(STATUS.INTERNAL_SERVER_ERROR).json(errorResponseBody);
     }
 };
@@ -74,15 +74,35 @@ const getAllBookings = async (req,res) => {
             return res.status(error.code).json(errorResponseBody);
         }
         errorResponseBody.err = error.message;
-        errorResponseBody.message = "Failed to create booking";
+        errorResponseBody.message = "Failed to get all bookings";
         res.status(STATUS.INTERNAL_SERVER_ERROR).json(errorResponseBody);
     }
 };
+
+const getBookingById = async (req,res) => {
+    try{
+        const response = await BookingService.getBookings({userId:req.user,_id:req.params.bookingId});
+        successResponseBody.data = response;
+        successResponseBody.message = "Booking for user fetched successfully";
+        res.status(STATUS.OK).json(successResponseBody);
+    }
+    catch(error){
+        if(error.err){
+            errorResponseBody.err = error.err;
+            errorResponseBody.message = error.message;
+            return res.status(error.code).json(errorResponseBody);
+        }
+        errorResponseBody.err = error.message;
+        errorResponseBody.message = "Failed to fetch booking";
+        res.status(STATUS.INTERNAL_SERVER_ERROR).json(errorResponseBody);
+    }
+}
 
 
 module.exports = {
     createBooking,
     updateBooking,
     getBookings,
-    getAllBookings
+    getAllBookings,
+    getBookingById
 }
