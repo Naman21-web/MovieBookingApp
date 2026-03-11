@@ -38,9 +38,29 @@ const getShows = async (req,res) => {
         errorResponseBody.message = "Error fetching show";
         return res.status(STATUS.INTERNAL_SERVER_ERROR).errorResponseBody
     }
-}
+};
+
+const deleteShow = async(req,res) => {
+    try{
+        const response = await ShowService.deleteShow(req.params.showId);
+        successResponseBody.data = response;
+        successResponseBody.message = "Show deleted successfully";
+        return res.status(STATUS.CREATED).json(successResponseBody);
+    }
+    catch(error){
+        if(error.err){
+            errorResponseBody.err = error.err;
+            errorResponseBody.message = err.message;
+            return res.status(err.code).json(errorResponseBody);
+        }
+        errorResponseBody.err = error.message;
+        errorResponseBody.message = "Error deleting show";
+        return res.status(STATUS.INTERNAL_SERVER_ERROR).errorResponseBody
+    }
+};
 
 module.exports = {
     createShow,
-    getShows
+    getShows,
+    deleteShow
 }

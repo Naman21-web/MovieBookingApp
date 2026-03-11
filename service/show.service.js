@@ -42,9 +42,27 @@ const getShows = async (data) => {
     catch(error){
         throw error;
     }
-}
+};
+
+const deleteShow = async (data) => {
+    try{
+        const response = await Show.findByIdAndDelete(data);
+        if(!response){
+            throw {
+                err: "No shows found",
+                code: STATUS.NOT_FOUND
+            }
+        }
+        return response;
+    }
+    catch(error){
+        throw error;
+    }
+};
+
 
 module.exports = {
     createShow,
-    getShows
+    getShows,
+    deleteShow
 }
