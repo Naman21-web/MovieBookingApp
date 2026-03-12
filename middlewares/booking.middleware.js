@@ -71,6 +71,12 @@ const validateBookingCreateRequest = async (req,res,next) => {
         return res.status(STATUS.BAD_REQUEST).json(badRequestResponse);
     }
 
+    //validate the totalCost
+    if(!req.body.totalCost){
+        badRequestResponse.err = "The totalCost of booking is not present in the request sent";
+        return res.status(STATUS.BAD_REQUEST).json(badRequestResponse);
+    }
+
     //If all validations pass, call the next middleware or controller
     next();
 };
