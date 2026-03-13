@@ -11,6 +11,12 @@ const createPayment = async (data) => {
                 code: STATUS.NOT_FOUND 
             }
         }
+        if(booking.status === BOOKING_STATUS.successful){
+            throw {
+                err: "Booking already done, cannot make a newpayment against it",
+                code: STATUS.FORBIDDEN
+            }
+        }
         let bookingTime =  booking.createdAt;
         let currentTime = Date.now();
 
@@ -20,7 +26,10 @@ const createPayment = async (data) => {
             await booking.save();
             return booking;
         }
-        const payment = await Payment.create(data);
+        const payment = await Payment.create({
+            booking: data.bookingId,
+            amount: data.amount
+        });
         if(payment.amount < booking.totalCost){
             payment.status = PAYMENT_STATUS.failed;
         }
@@ -30,6 +39,8 @@ const createPayment = async (data) => {
             await payment.save();
             return booking;
         }
+        booking.status = BOOKING_STATUS.successful;
+        payment.status = PAYMENT_STATUS.success;
         await booking.save();
         await payment.save();
         return booking;
@@ -49,6 +60,23 @@ const createPayment = async (data) => {
     }
 };
 
+const getPaymentById = async (id) => {
+    try{    
+        const payment = await Payment.findById(id).populate("booking");
+        if(!payment){
+            throw {
+                err: "No payment record found",
+                code: STATUS.NOT_FOUND
+            }
+        }
+        return payment;
+    }
+    catch(error){
+        throw error;
+    }
+};
+
 module.exports = {
-    createPayment
+    createPayment,
+    getPaymentById
 }

@@ -17,10 +17,32 @@ const createPayment = async (req,res) => {
         }
         errorResponseBody.err = error.message;
         errorResponseBody.message = "Error completing payment";
-        return res.status(STATUS.INTERNAL_SERVER_ERROR).errorResponseBody
+        return res.status(STATUS.INTERNAL_SERVER_ERROR).json(errorResponseBody);
     }
 };
 
+const getPaymentDetailsById = async (req,res) => {
+    try{
+        const response = await PaymentService.getPaymentById(req.params.paymentId);
+        console.log("Response: ",response);
+        successResponseBody.data = response;
+        successResponseBody.message = "Payment details fetched successfully";
+        return res.status(STATUS.OK).json(successResponseBody);
+
+    }
+    catch(error){
+        if(error.err){
+            errorResponseBody.err = error.err;
+            errorResponseBody.message = error.message;
+            return res.status(error.code).json(errorResponseBody);
+        }
+        errorResponseBody.err = error.message;
+        errorResponseBody.message = "Error fetching payment";
+        return res.status(STATUS.INTERNAL_SERVER_ERROR).json(errorResponseBody);
+    }
+}
+
 module.exports = {
-    createPayment
+    createPayment,
+    getPaymentDetailsById
 }

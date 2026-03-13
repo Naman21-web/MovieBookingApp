@@ -7,7 +7,11 @@ const routes = (app) =>{
         AuthMiddleware.isAuthenticated,
         PaymentMiddleware.validateCreatePaymentRequest,
         PaymentController.createPayment
-    )
+    );
+    app.get("/mba/api/v1/payments/:paymentId",
+        AuthMiddleware.isAuthenticated,
+        PaymentController.getPaymentDetailsById
+    );
 };
 
 module.exports = routes;
