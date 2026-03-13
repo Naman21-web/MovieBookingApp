@@ -1,10 +1,18 @@
 const Booking = require('../models/booking.model');
+const Show = require("../models/show.model")
 const { STATUS } = require("../utils/constants");
 
 const createBooking = async (data) => {
     try{
-                
+        const show = await Show.findOne({
+            movieId:data.movieId,
+            theatreId:data.theatreId,
+            timing:data.timing
+        }); 
+        data.totalCost =  data.noOfSeats*show.price;     
         const booking = new Booking(data);
+        // show.noOfSeats -= data.noOfSeats; 
+        await show.save();
         await booking.save();
         return booking; 
     }
