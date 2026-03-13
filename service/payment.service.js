@@ -1,6 +1,7 @@
 const Payment = require("../models/payment.model");
 const Booking = require("../models/booking.model");
-const { STATUS, BOOKING_STATUS, PAYMENT_STATUS } = require("../utils/constants");
+const User = require("../models/user.model")
+const { STATUS, BOOKING_STATUS, PAYMENT_STATUS, USER_ROLE } = require("../utils/constants");
 
 const createPayment = async (data) => {
     try{
@@ -13,7 +14,7 @@ const createPayment = async (data) => {
         }
         if(booking.status === BOOKING_STATUS.successful){
             throw {
-                err: "Booking already done, cannot make a newpayment against it",
+                err: "Booking already done, cannot make a new payment against it",
                 code: STATUS.FORBIDDEN
             }
         }
@@ -24,7 +25,11 @@ const createPayment = async (data) => {
         if(minutes > 5){
             booking.status = BOOKING_STATUS.expired;
             await booking.save();
-            return booking;
+            throw {
+                err: "Payment took more than 5 minutes to complete",
+                data: booking,
+                code: STATUS.GONE
+            }    
         }
         const payment = await Payment.create({
             booking: data.bookingId,
@@ -37,7 +42,11 @@ const createPayment = async (data) => {
             booking.status = BOOKING_STATUS.cancelled;
             await booking.save();
             await payment.save();
-            return booking;
+            throw {
+                err: "Payment failed due to some reason,booking was not successful,please try again",
+                data: booking,
+                code: STATUS.PAYMENT_REQUIRED
+            }   
         }
         booking.status = BOOKING_STATUS.successful;
         payment.status = PAYMENT_STATUS.success;
@@ -76,7 +85,41 @@ const getPaymentById = async (id) => {
     }
 };
 
+const getAllPayments = async (id) => {
+    try{
+        const user = await User.findById(id);
+        let payments;
+        if(user.userRole === USER_ROLE.admin){
+            payments = await Payment.find({}).populate("booking");
+        }
+        else{
+            // payments = await Payment.find({}).populate({
+            //     path: "booking",
+            //     match: {
+            //         userId: id
+            //     }
+            // });
+            // payments = payments.filter(p => p.booking);
+            const bookings = await Booking.find({ userId: id });
+            payments = await Payment.find({
+                            booking: { $in: bookings.map(b => b._id) }
+                        }).populate("booking");
+        }
+        if(!payments){
+            throw {
+                err: "No payment found",
+                code: STATUS.NOT_FOUND 
+            }
+        }
+        return payments;
+    }
+    catch(error){
+        throw error;
+    }
+} 
+
 module.exports = {
     createPayment,
-    getPaymentById
+    getPaymentById,
+    getAllPayments
 }
