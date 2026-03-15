@@ -1,4 +1,6 @@
 const Theatre = require('../models/theatre.model');
+const User = require("../models/user.model");
+const EmailService = require("../service/email.service");
 const TheatreService = require('../service/theatre.service');
 const {successResponseBody, errorResponseBody} = require('../utils/responseBody');
 const {STATUS} =  require("../utils/constants");
@@ -21,6 +23,13 @@ const createTheatre = async (req, res) => {
         const response = await TheatreService.createTheatre({...req.body,owner:userId});
         successResponseBody.data = response;
         successResponseBody.message = "Theatre created successfully";
+        
+        const subject = "Your Theatre creation is sucessful";
+        const user = await User.findById(req.user);
+        const recepientEmails = [user.email];
+        const content = `Your theatre creation ${req.body.name} for address ${req.body.address} pinCode ${req.body.pinCode} has been successful. Your theatre id is ${response._id}`;
+        EmailService.sendMail(subject,recepientEmails,content);
+
         res.status(STATUS.CREATED).json(successResponseBody);
     }
     catch(error){
