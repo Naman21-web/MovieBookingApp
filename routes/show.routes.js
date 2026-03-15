@@ -5,7 +5,7 @@ const AuthMiddleware = require("../middlewares/auth.middleware");
 const routes = (app) => {
     app.post("/mba/api/v1/shows",
         AuthMiddleware.isAuthenticated,
-        AuthMiddleware.isAdminOrClient,
+        AuthMiddleware.isAdminOrOwner,
         ShowMiddleware.validateCreateShowRequest,
         ShowController.createShow
     )
@@ -15,12 +15,12 @@ const routes = (app) => {
     )
     app.delete("/mba/api/v1/shows/:showId",
         AuthMiddleware.isAuthenticated,
-        AuthMiddleware.isAdminOrClient,
+        AuthMiddleware.isAdminOrOwner,
         ShowController.deleteShow
     )
     app.patch("/mba/api/v1/shows/:showId",
         AuthMiddleware.isAuthenticated,
-        AuthMiddleware.isAdminOrClient,
+        AuthMiddleware.isAdminOrOwner,
         ShowMiddleware.validateShowUpdateRequest,
         ShowController.updateShow
     )

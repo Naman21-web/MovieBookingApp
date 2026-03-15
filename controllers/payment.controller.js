@@ -1,12 +1,27 @@
 const PaymentService = require("../service/payment.service");
+const EmailService = require("../service/email.service");
 const { STATUS } = require("../utils/constants");
 const { errorResponseBody, successResponseBody } = require("../utils/responseBody");
+const Movie = require("../models/movie.model");
+const User = require("../models/user.model");
+const Theatre = require("../models/theatre.model");
 
 const createPayment = async (req,res) => {
     try{
         const response = await PaymentService.createPayment(req.body);
         successResponseBody.data = response;
         successResponseBody.message = "Payment completed successfully";
+
+        const subject = "Your Booking is sucessful"
+        const user = await User.findById(response.userId);
+        const recepientEmails = [user.email];
+        const movie = await Movie.findById(response.movieId);
+        const theatre = await Theatre.findById(response.theatreId);
+        const movieName = movie.name;
+        const theatreName = theatre.name;
+        const content = `Your booking for movie ${movieName} in ${theatreName} for ${response.noOfSeats} on ${response.timing} has been successful. Your booking id is ${response._id}`;
+        EmailService.sendMail(subject,recepientEmails,content);
+        
         return res.status(STATUS.OK).json(successResponseBody);
     }
     catch(error){
