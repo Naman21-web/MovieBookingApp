@@ -22,12 +22,11 @@ const createPayment = async (req,res) => {
         const movieName = movie.name;
         const theatreName = theatre.name;
         const content = `Your booking for movie ${movieName} in ${theatreName} for ${response.noOfSeats} on ${response.timing} has been successful. Your booking id is ${response._id}`
-        const notificationResponse = await axios.post(process.env.NOTI_SERVICE + '/notiservice/api/v1/notifications',{
+        axios.post(process.env.NOTI_SERVICE + '/notiservice/api/v1/notifications',{
             subject:"Your Booking is sucessful",
             recepientEmails,
             content
         });
-        console.log("Response from Notification service",notificationResponse);
         return res.status(STATUS.OK).json(successResponseBody);
     }
     catch(error){

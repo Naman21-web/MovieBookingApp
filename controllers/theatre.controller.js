@@ -17,7 +17,8 @@ const {STATUS} =  require("../utils/constants");
 
 const createTheatre = async (req, res) => {
     try{
-        const response = await TheatreService.createTheatre(req.body);
+        const userId = req.user;
+        const response = await TheatreService.createTheatre({...req.body,owner:userId});
         successResponseBody.data = response;
         successResponseBody.message = "Theatre created successfully";
         res.status(STATUS.CREATED).json(successResponseBody);
