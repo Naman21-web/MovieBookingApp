@@ -41,13 +41,14 @@ const signin = async ( req,res) => {
         );
 
         successResponseBody.data = {
+            id:response._id,
             email:  response.email,
             role: response.userRole,
             status: response.userStatus,
             token: token
         };
         successResponseBody.message = "User Profile logged in successfully";
-        return res.status(201).json(successResponseBody); 
+        return res.status(200).json(successResponseBody); 
     }
     catch(error){
         if(error.err){

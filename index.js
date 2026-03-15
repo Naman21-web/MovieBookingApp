@@ -9,6 +9,7 @@ const UserRoutes = require('./routes/user.routes');
 const BookingRoutes = require('./routes/booking.routes');
 const ShowRoutes = require("./routes/show.routes");
 const PaymentRoutes = require("./routes/payment.route");
+const SeatsRoutes = require("./routes/seat.routes");
 
 env.config();
 const app = express();
@@ -24,6 +25,7 @@ UserRoutes(app); //invoking user routes
 BookingRoutes(app);//invoking booking routes
 ShowRoutes(app);//invoking show routes
 PaymentRoutes(app);//invoking payment routes
+SeatsRoutes(app);//invoking seat routes
 
 app.get('/', (req, res) => {
   return res.json({
