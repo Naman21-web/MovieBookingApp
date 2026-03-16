@@ -44,6 +44,10 @@ const showSeatSchema = new mongoose.Schema({
     type: Date,
     index: true
   }
+
 }, { timestamps: true });
 
-const showSeat = mongoose.model('ShowSeat',showSeatSchema);
+// prevent duplicate seat for same show
+showSeatSchema.index({ showId: 1, seatId: 1 }, { unique: true });
+
+module.exports = mongoose.model("ShowSeat", showSeatSchema);
