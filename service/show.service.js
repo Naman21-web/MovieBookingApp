@@ -1,9 +1,11 @@
 const Show = require("../models/show.model");
 const { STATUS } = require("../utils/constants");
+const ShowSeatService = require("../service/showSeat.service");
 
 const createShow = async (data) => {
     try{
         const response = await Show.create(data);
+        ShowSeatService.createShowSeats(response);
         return response;
     }
     catch(error){
@@ -14,7 +16,7 @@ const createShow = async (data) => {
             });
             throw {
                 err,
-                code: 422
+                code: STATUS.UNPROCESSABLE
             }
         }
         throw error;
@@ -79,7 +81,7 @@ const updateShow = async (showId,data) => {
             });
             throw {
                 err,
-                code: 422
+                code: STATUS.UNPROCESSABLE
             }
         }
         throw error;
