@@ -71,6 +71,11 @@ const validateBookingCreateRequest = async (req,res,next) => {
         return res.status(STATUS.BAD_REQUEST).json(badRequestResponse);
     }
 
+    if(!req.body.seatNumbers || !Array.isArray(req.body.seatNumbers) || req.body.seatNumbers.length === 0){
+        badRequestResponse.err = "The seatNumbers of booking is not present in the request sent";
+        return res.status(STATUS.BAD_REQUEST).json(badRequestResponse);
+    }    
+
     //validate the totalCost
     if(!req.body.totalCost){
         badRequestResponse.err = "The totalCost of booking is not present in the request sent";

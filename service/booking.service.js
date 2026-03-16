@@ -1,5 +1,7 @@
 const Booking = require('../models/booking.model');
-const Show = require("../models/show.model")
+const Show = require("../models/show.model");
+const ShowSeatService = require("../service/showSeat.service");
+const mongoose = require("mongoose");
 const { STATUS } = require("../utils/constants");
 
 const createBooking = async (data) => {
@@ -9,14 +11,17 @@ const createBooking = async (data) => {
             theatreId:data.theatreId,
             timing:data.timing
         }); 
-        data.totalCost =  data.noOfSeats*show.price;     
-        const booking = new Booking(data);
+        data.totalCost =  data.noOfSeats*show.price; 
+        const bookingId = new mongoose.Types.ObjectId();    
+        const modifiedSeats =  await ShowSeatService.lockShowSeats(show._id, data.seatNumbers, bookingId);
+        const booking = new Booking({_id:bookingId,...data});
         // show.noOfSeats -= data.noOfSeats; 
         await show.save();
         await booking.save();
         return booking; 
     }
     catch(error){
+        console.log(error);
         if(error.name === 'ValidationError'){
             let err = {};
             Object.keys(error.errors).forEach((key) => {
