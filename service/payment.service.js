@@ -2,6 +2,8 @@ const Payment = require("../models/payment.model");
 const Booking = require("../models/booking.model");
 const User = require("../models/user.model");
 const Show = require("../models/show.model");
+const ShowSeat = require("../models/showSeat.model");
+
 const { STATUS, BOOKING_STATUS, PAYMENT_STATUS, USER_ROLE } = require("../utils/constants");
 
 const createPayment = async (data) => {
@@ -57,6 +59,22 @@ const createPayment = async (data) => {
         show.noOfSeats -= booking.noOfSeats;
         booking.status = BOOKING_STATUS.successful;
         payment.status = PAYMENT_STATUS.success;
+        await ShowSeat.updateMany(
+            {
+                lockedBy: booking._id,
+                status: "LOCKED"
+            },
+            {
+                $set: {
+                    status: "BOOKED"
+                },
+                $unset: {
+                    lockedBy: "",
+                    lockedAt: "",
+                    expiresAt: ""
+                }
+            }
+        );
         await show.save();
         await booking.save();
         await payment.save();

@@ -11,6 +11,7 @@ const ShowRoutes = require("./routes/show.routes");
 const PaymentRoutes = require("./routes/payment.route");
 const SeatsRoutes = require("./routes/seat.routes");
 const ShowSeatRoutes = require("./routes/showSeat.routes");
+const mailerCron = require("./crons/cron")
 
 
 env.config();
@@ -48,4 +49,5 @@ app.listen(port, async () => {
   } catch (error) {
     console.error('Error connecting to MongoDB:', error);
   }
+  mailerCron();
 });
