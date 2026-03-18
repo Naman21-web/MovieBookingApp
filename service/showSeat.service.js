@@ -36,16 +36,16 @@ const getShowSeats = async (showId) => {
 };
 
 const lockShowSeats = async (showId, seatNumbers, bookingId) => {
-    const session = await mongoose.startSession();
+    // const session = await mongoose.startSession();
     try{
         const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
         const seats = await ShowSeat.find({
-        showId,
-        seatNumber: { $in: seatNumbers }
+            showId,
+            seatNumber: { $in: seatNumbers }
         });
 
-        console.log(seats,showId);
-        session.startTransaction();
+        // console.log(seats,showId);
+        // session.startTransaction();
         const result = await ShowSeat.updateMany(
             {
                 showId,
@@ -66,24 +66,39 @@ const lockShowSeats = async (showId, seatNumbers, bookingId) => {
                     expiresAt
                 }
             },
-            {
-                session
-            }
+            // {
+            //     session
+            // }
         );
         if(result.modifiedCount != seatNumbers.length){
+            await ShowSeat.updateMany(
+                {
+                    showId,
+                    seatNumber: { $in: seatNumbers },
+                    lockedBy: bookingId 
+                },
+                {
+                    $set: { status: "AVAILABLE" },
+                    $unset: {
+                        lockedBy: "",
+                        lockedAt: "",
+                        expiresAt: ""
+                    }
+                }
+            );
             throw {
                 err: "Some seats are already booked",
                 code: STATUS.BAD_REQUEST
             }
         }
-        await session.commitTransaction();
-        session.endSession();
+        // await session.commitTransaction();
+        // session.endSession();
         return result.modifiedCount;
     }
     catch(error){
         console.log(error); 
-        await session.abortTransaction();
-        session.endSession();
+        // await session.abortTransaction();
+        // session.endSession();
         throw error;
     }
 }; 
