@@ -21,6 +21,15 @@ const mailerCron = () => {
             }
         );
         // console.log(updatedSeats);
+        Booking.updateMany(
+            {
+                status: "PENDING",
+                createdAt: { $lt: new Date(Date.now() - 10 * 60 * 1000) }
+            },
+            {
+                $set: { status: "FAILED" }
+            }
+        );
     })
 };
 
