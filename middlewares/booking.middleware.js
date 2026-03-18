@@ -84,7 +84,7 @@ const validateBookingCreateRequest = async (req,res,next) => {
 
     //validate the totalCost
     if(!req.body.idempotencyKey){
-        badRequestResponse.err = "The totalCost of booking is not present in the request sent";
+        badRequestResponse.err = "The idempotencyKey of booking is not present in the request sent";
         return res.status(STATUS.BAD_REQUEST).json(badRequestResponse);
     }
 

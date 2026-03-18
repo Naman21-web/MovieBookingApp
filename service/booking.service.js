@@ -1,11 +1,21 @@
 const Booking = require('../models/booking.model');
 const Show = require("../models/show.model");
+const ShowSeat = require("../models/showSeat.model");
 const ShowSeatService = require("../service/showSeat.service");
 const mongoose = require("mongoose");
 const { STATUS } = require("../utils/constants");
 
 const createBooking = async (data) => {
     try{
+        const idempotencyKey = data.idempotencyKey;
+        const duplicateBooking = await Booking.find({idempotencyKey}) ;
+        console.log(duplicateBooking);
+        if(duplicateBooking.length > 0){
+            throw {
+                err: "Duplicate Booking,Booking already in process",
+                code:STATUS.CONFLICT
+            }
+        }
         const show = await Show.findOne({
             movieId:data.movieId,
             theatreId:data.theatreId,
@@ -17,6 +27,8 @@ const createBooking = async (data) => {
                 code: STATUS.NOT_FOUND
             }
         }
+        const showId = show._id;
+        const seatNumbers = data.seatNumbers;
         const validSeats = await ShowSeat.find({
             showId,
             seatNumber: { $in: seatNumbers }

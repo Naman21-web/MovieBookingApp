@@ -36,7 +36,7 @@ const getShows = async (req,res) => {
         }
         errorResponseBody.err = error.message;
         errorResponseBody.message = "Error fetching show";
-        return res.status(STATUS.INTERNAL_SERVER_ERROR).errorResponseBody
+        return res.status(STATUS.INTERNAL_SERVER_ERROR).json(errorResponseBody);
     }
 };
 
