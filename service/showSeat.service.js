@@ -50,7 +50,13 @@ const lockShowSeats = async (showId, seatNumbers, bookingId) => {
             {
                 showId,
                 seatNumber: { $in: seatNumbers },
-                status: "AVAILABLE"
+                $or: [
+                        { status: "AVAILABLE" },
+                        {
+                            status: "LOCKED",
+                            expiresAt: { $lt: new Date() }
+                        }
+                    ]
             },
             {
                 $set: {
