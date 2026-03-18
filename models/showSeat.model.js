@@ -49,5 +49,7 @@ const showSeatSchema = new mongoose.Schema({
 
 // prevent duplicate seat for same show
 showSeatSchema.index({ showId: 1, seatId: 1 }, { unique: true });
+ShowSeatSchema.index({ showId: 1, seatNumber: 1 });
+ShowSeatSchema.index({ status: 1, expiresAt: 1 });
 
 module.exports = mongoose.model("ShowSeat", showSeatSchema);
