@@ -1,5 +1,6 @@
 const cron = require("node-cron");
 const ShowSeat = require("../models/showSeat.model");
+const Booking = require("../models/booking.model");
 
 const mailerCron = () => {
     cron.schedule('*/2 * * * *', async () => {//Schedule cron after every 2 mins

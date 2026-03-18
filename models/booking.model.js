@@ -33,6 +33,10 @@ const bookingSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
+    idempotencyKey: {
+        type: String,
+        required: true
+    },
     status: {
         type: String,
         required: true,

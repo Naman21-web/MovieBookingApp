@@ -11,6 +11,23 @@ const createBooking = async (data) => {
             theatreId:data.theatreId,
             timing:data.timing
         }); 
+        if(!show){
+            throw {
+                err: "No show found",
+                code: STATUS.NOT_FOUND
+            }
+        }
+        const validSeats = await ShowSeat.find({
+            showId,
+            seatNumber: { $in: seatNumbers }
+        });
+
+        if (validSeats.length !== seatNumbers.length) {
+            throw {
+                err: "Invalid seat selected",
+                code: STATUS.NOT_FOUND
+            }
+        }
         data.totalCost =  data.noOfSeats*show.price; 
         const bookingId = new mongoose.Types.ObjectId();    
         const modifiedSeats =  await ShowSeatService.lockShowSeats(show._id, data.seatNumbers, bookingId);
