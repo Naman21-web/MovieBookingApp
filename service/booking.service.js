@@ -33,7 +33,6 @@ const createBooking = async (data) => {
             showId,
             seatNumber: { $in: seatNumbers }
         });
-
         if (validSeats.length !== seatNumbers.length) {
             throw {
                 err: "Invalid seat selected",

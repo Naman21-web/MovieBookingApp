@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const ShowSeat = require("../models/showSeat.model");
 const SeatService = require("../service/seat.service");
 const { STATUS } = require("../utils/constants");
+const RedisSeats = require("../redis/redis");
 
 const createShowSeats = async (data) => {
     try{
@@ -27,11 +28,28 @@ const createShowSeats = async (data) => {
 
 const getShowSeats = async (showId) => {
     try{
-        const seats = await ShowSeat.find({showId},{createdAt:0,updatedAt:0});
-        return seats;
+        const seats = await ShowSeat.find({showId},{createdAt:0,updatedAt:0}).lean();
+        const lockedSeats = await RedisSeats.getLockedSeats(showId);
+
+        const lockedSet = new Set(lockedSeats);
+
+        return seats.map(seat => {
+
+            if (seat.status === "BOOKED") {
+                return { ...seat, status: "BOOKED" };
+            }
+
+            if (lockedSet.has(seat.seatNumber)) {
+                return { ...seat, status: "LOCKED" };
+            }
+
+            return { ...seat, status: "AVAILABLE" };
+        });
+        // return seats;
     }
     catch(error){
-        throw err;
+        console.log(error);
+        throw error;
     }
 };
 
@@ -44,56 +62,75 @@ const lockShowSeats = async (showId, seatNumbers, bookingId) => {
             seatNumber: { $in: seatNumbers }
         });
 
-        // console.log(seats,showId);
-        // session.startTransaction();
-        const result = await ShowSeat.updateMany(
-            {
-                showId,
-                seatNumber: { $in: seatNumbers },
-                $or: [
-                        { status: "AVAILABLE" },
-                        {
-                            status: "LOCKED",
-                            expiresAt: { $lt: new Date() }
-                        }
-                    ]
-            },
-            {
-                $set: {
-                    status: "LOCKED",
-                    lockedBy: bookingId,
-                    lockedAt: new Date(),
-                    expiresAt
-                }
-            },
-            // {
-            //     session
-            // }
-        );
-        if(result.modifiedCount != seatNumbers.length){
-            await ShowSeat.updateMany(
-                {
-                    showId,
-                    seatNumber: { $in: seatNumbers },
-                    lockedBy: bookingId 
-                },
-                {
-                    $set: { status: "AVAILABLE" },
-                    $unset: {
-                        lockedBy: "",
-                        lockedAt: "",
-                        expiresAt: ""
-                    }
-                }
-            );
+        if (seats.length !== seatNumbers.length) {
             throw {
-                err: "Some seats are already booked",
+                err: "Invalid seat selection",
                 code: STATUS.BAD_REQUEST
             }
         }
+
+        const alreadyBooked = seats.some(seat => seat.status === "BOOKED");
+
+        if (alreadyBooked) {
+            throw {
+                err: "Some seats are already booked",
+                code: STATUS.BAD_REQUEST
+            }    
+        }
+
+
+
+        // console.log(seats,showId);
+        // session.startTransaction();
+        // const result = await ShowSeat.updateMany(
+        //     {
+        //         showId,
+        //         seatNumber: { $in: seatNumbers },
+        //         $or: [
+        //                 { status: "AVAILABLE" },
+        //                 {
+        //                     status: "LOCKED",
+        //                     expiresAt: { $lt: new Date() }
+        //                 }
+        //             ]
+        //     },
+        //     {
+        //         $set: {
+        //             status: "LOCKED",
+        //             lockedBy: bookingId,
+        //             lockedAt: new Date(),
+        //             expiresAt
+        //         }
+        //     },
+        //     // {
+        //     //     session
+        //     // }
+        // );
+        // if(result.modifiedCount != seatNumbers.length){
+        //     await ShowSeat.updateMany(
+        //         {
+        //             showId,
+        //             seatNumber: { $in: seatNumbers },
+        //             lockedBy: bookingId 
+        //         },
+        //         {
+        //             $set: { status: "AVAILABLE" },
+        //             $unset: {
+        //                 lockedBy: "",
+        //                 lockedAt: "",
+        //                 expiresAt: ""
+        //             }
+        //         }
+        //     );
+        //     throw {
+        //         err: "Some seats are already booked",
+        //         code: STATUS.BAD_REQUEST
+        //     }
+        // }
         // await session.commitTransaction();
         // session.endSession();
-        return result.modifiedCount;
+        const lockedSeats = await RedisSeats.lockSeatsRedis(showId,seatNumbers,bookingId);
+        return lockedSeats;
     }
     catch(error){
         console.log(error); 

@@ -3,6 +3,7 @@ const Booking = require("../models/booking.model");
 const User = require("../models/user.model");
 const Show = require("../models/show.model");
 const ShowSeat = require("../models/showSeat.model");
+const RedisSeats = require("../redis/redis");
 
 const { STATUS, BOOKING_STATUS, PAYMENT_STATUS, USER_ROLE } = require("../utils/constants");
 
@@ -39,6 +40,9 @@ const createPayment = async (data) => {
                 code: STATUS.GONE
             }    
         }
+        const showId = show._id;
+        const seatNumbers = booking.seatNumbers; 
+        const checkBooking = await RedisSeats.checkBooking(showId, booking.seatNumbers, data.bookingId);
         const payment = await Payment.create({
             booking: data.bookingId,
             amount: data.amount
@@ -61,26 +65,26 @@ const createPayment = async (data) => {
         payment.status = PAYMENT_STATUS.success;
         await ShowSeat.updateMany(
             {
-                lockedBy: booking._id,
-                status: "LOCKED"
+                showId,
+                seatNumber: { $in: seatNumbers }
             },
             {
-                $set: {
-                    status: "BOOKED"
-                },
+                $set: { status: "BOOKED" },
                 $unset: {
                     lockedBy: "",
-                    lockedAt: "",
                     expiresAt: ""
                 }
             }
         );
+        const res = RedisSeats.confirmBooking(showId, booking.seatNumbers);
+
         await show.save();
         await booking.save();
         await payment.save();
         return booking;
     }
     catch(error){
+        console.log(error);
         if(error.name === "ValidationError"){
             let err = {};
             Object.keys(error.errors).forEach(key => {

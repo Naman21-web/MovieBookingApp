@@ -11,7 +11,8 @@ const ShowRoutes = require("./routes/show.routes");
 const PaymentRoutes = require("./routes/payment.route");
 const SeatsRoutes = require("./routes/seat.routes");
 const ShowSeatRoutes = require("./routes/showSeat.routes");
-const mailerCron = require("./crons/cron")
+const mailerCron = require("./crons/cron");
+const redisClient = require("./redis/redisClient");
 
 
 env.config();
@@ -50,4 +51,5 @@ app.listen(port, async () => {
     console.error('Error connecting to MongoDB:', error);
   }
   mailerCron();
+  redisClient.connectRedis();
 });
