@@ -13,11 +13,6 @@ const connectRedis = async () => {
             await client.connect();
             console.log('Connected to Redis Cloud!');
         }
-
-        await client.set('framework', 'Node.js');
-        const value = await client.get('framework');
-        console.log(`The value of 'framework' is: ${value}`);
-
         return client;
     } catch (err) {
         console.error('Failed to connect or operate:', err);
