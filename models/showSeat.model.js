@@ -25,25 +25,25 @@ const showSeatSchema = new mongoose.Schema({
 
   status: {
     type: String,
-    enum: ["AVAILABLE", "LOCKED", "BOOKED"],
+    enum: ["AVAILABLE",  "BOOKED"],
     default: "AVAILABLE",
     index: true
   },
 
-  lockedBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Booking",
-    default: null
-  },
+  // lockedBy: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: "Booking",
+  //   default: null
+  // },
 
-  lockedAt: {
-    type: Date
-  },
+  // lockedAt: {
+  //   type: Date
+  // },
 
-  expiresAt: {
-    type: Date,
-    index: true
-  }
+  // expiresAt: {
+  //   type: Date,
+  //   index: true
+  // }
 
 }, { timestamps: true });
 

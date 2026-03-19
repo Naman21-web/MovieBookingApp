@@ -70,10 +70,10 @@ const createPayment = async (data) => {
             },
             {
                 $set: { status: "BOOKED" },
-                $unset: {
-                    lockedBy: "",
-                    expiresAt: ""
-                }
+                // $unset: {
+                //     lockedBy: "",
+                //     expiresAt: ""
+                // }
             }
         );
         const res = RedisSeats.confirmBooking(showId, booking.seatNumbers);
