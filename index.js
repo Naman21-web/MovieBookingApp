@@ -9,6 +9,10 @@ const UserRoutes = require('./routes/user.routes');
 const BookingRoutes = require('./routes/booking.routes');
 const ShowRoutes = require("./routes/show.routes");
 const PaymentRoutes = require("./routes/payment.route");
+const SeatsRoutes = require("./routes/seat.routes");
+const ShowSeatRoutes = require("./routes/showSeat.routes");
+const mailerCron = require("./crons/cron")
+
 
 env.config();
 const app = express();
@@ -24,6 +28,8 @@ UserRoutes(app); //invoking user routes
 BookingRoutes(app);//invoking booking routes
 ShowRoutes(app);//invoking show routes
 PaymentRoutes(app);//invoking payment routes
+SeatsRoutes(app);//invoking seat routes
+ShowSeatRoutes(app);//invoking show seat routes
 
 app.get('/', (req, res) => {
   return res.json({
@@ -43,4 +49,5 @@ app.listen(port, async () => {
   } catch (error) {
     console.error('Error connecting to MongoDB:', error);
   }
+  mailerCron();
 });
