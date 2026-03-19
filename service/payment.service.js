@@ -76,7 +76,7 @@ const createPayment = async (data) => {
                 // }
             }
         );
-        const res = RedisSeats.confirmBooking(showId, booking.seatNumbers);
+        const res = RedisSeats.unlockSeat(showId, booking.seatNumbers);
 
         await show.save();
         await booking.save();

@@ -71,7 +71,7 @@ const checkBooking = async (showId, seatNumbers, bookingId) => {
 
 };
 
-const confirmBooking = async (showId, seatNumbers) => {
+const unlockSeat = async (showId, seatNumbers) => {
     // release locks
     for (let seat of seatNumbers) {
         await client.del(`seat_lock:${showId}:${seat}`);
